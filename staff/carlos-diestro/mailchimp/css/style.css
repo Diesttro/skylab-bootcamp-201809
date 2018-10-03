@@ -1,0 +1,181 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  background-color: #46BDD4;
+  color: #424242;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1040px;
+}
+
+header {
+  margin-top: 50px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+}
+
+nav a {
+  text-decoration: none;
+  color: #424242;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  background-color: #D1EEF6;
+  border-radius: 8px;
+}
+
+nav li {
+  padding: 15px 20px;
+}
+
+.logo {
+  margin-right: 30px;
+}
+
+.button {
+  padding: 20px;
+  display: inline-block;
+  background-color: #424242;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+nav .button {
+  margin-right: 20px;
+}
+
+.button-orange {
+  margin-top: 20px;
+  padding: 20px 60px;
+  background-color: #e95c41;
+}
+
+.search {
+  border: none;
+  padding: 5px;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+}
+
+.slider {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.monkey {
+  margin-right: 50px;
+}
+
+.text {
+  margin-top: 35px;
+  flex-direction: row;
+}
+
+.text img {
+  margin-bottom: 30px;
+}
+
+.wrapper {
+  position: relative;
+  top: 30px;
+  background-color: #CCD0CF;
+}
+
+.float {
+  position: relative;
+  top: -35px;
+}
+
+.news {
+  padding: 30px;
+  background-color: #F0F0F0;
+  border-radius: 5px;
+}
+
+.articles {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.news article {
+  margin: 20px 45px 0 0;
+  max-width: 210px;
+}
+
+.news article:last-child {
+  margin-right: 0;
+  max-width: 210px;
+}
+
+.sup {
+  margin: 15px 0 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.title {
+  margin: 5px 0 15px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.desc {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.button-article {
+  margin-top: 30px;
+  padding: 5px;
+  width: 100%;
+  font-size: 12px;
+}
+
+.wrapper-footer {
+  margin-top: -5px;
+  position: relative;
+  background-color: #191814;
+}
+
+footer {
+  padding: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.links {
+  margin-right: 20px;
+  width: 210px;
+}
+
+.links:last-child {
+  margin-right: 0;
+}
+
+.links a {
+  margin: 10px 0;
+  font-size: 14px;
+  display: block;
+  color: #575652;
+  text-decoration: none;
+}
