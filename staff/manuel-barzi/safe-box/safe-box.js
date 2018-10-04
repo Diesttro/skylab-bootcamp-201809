@@ -8,4 +8,4 @@ var safeBox = {
     retrieveSecret: function(password) {
         // TODO
     }
-}
+};
