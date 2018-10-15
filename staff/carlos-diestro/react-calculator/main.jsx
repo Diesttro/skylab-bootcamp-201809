@@ -1,45 +1,60 @@
-const root = document.getElementById('root')
-
-class Input extends React.Component {
-    state = {
-        type: '',
-        value : ''
-    }
-
-    updateValue = (event) => {
-        console.log(event)
-        this.setState({ value: event.target.value })
-    }
-
-    render() {
-        return <input type={this.props.type} value={this.state.value} onChange={this.updateValue} />
-    }
-}
-
-class Button extends React.Component {
-    state = { operation: this.props.operation }
-
-    whenClicked = () => {
-        this.props.whenClicked()
-    }
-
-    render() {
-        return <button onClick={this.whenClicked}>{this.state.operation}</button>
-    }
+function Button(props) {
+    return <button onClick={() => props.onClick(props.operation)}>{props.operation}</button>
 }
 
 class App extends React.Component {
+    state = { numberA: '', numberB: '', result: '' }
+
+    keepNumberA = event => {
+        const numberA = event.target.value
+
+        this.setState({ numberA })
+    }
+
+    keepNumberB = event => {
+        const numberB = event.target.value
+
+        this.setState({ numberB })
+    }
+
+    operate = operation => {
+        const { numberA, numberB } = this.state
+
+        const a = parseFloat(numberA), b = parseFloat(numberB)
+
+        let result
+
+        switch (operation) {
+            case '+':
+                result = a + b
+                break
+            case '-':
+                result = a - b
+                break
+            case '*':
+                result = a * b
+                break
+            case '/':
+                result = a / b
+        }
+
+        this.setState({ result })
+    }
+
     render() {
-        return <section>
-            <Input type="number" />
-            <Button operation="+" />
-            <Button operation="-" />
-            <Button operation="*" />
-            <Button operation="/" />
-        </section>
+        return <div>
+            <input value={this.state.numberA} type="number" onChange={this.keepNumberA} tabIndex="0" />
+
+            <Button operation="+" onClick={this.operate}></Button>
+            <Button operation="-" onClick={this.operate}></Button>
+            <Button operation="*" onClick={this.operate}></Button>
+            <Button operation="/" onClick={this.operate}></Button>
+
+            <input value={this.state.numberB} type="number" onChange={this.keepNumberB} tabIndex="1" />
+
+            =<input value={this.state.result} type="result" disabled />
+        </div>
     }
 }
 
-ReactDOM.render(<App />, root)
-
-
+ReactDOM.render(<App />, document.getElementById('root'))
