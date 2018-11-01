@@ -1,15 +1,18 @@
 const express = require('express')
-const logic = require('./logic')
 
 const { argv: [, , port = 8080] } = process
 
 const app = express()
 
-let error = null
+const users = [
+    { name: 'Peter', surname: 'Sellers', username: 'u', password: 'p' }
+]
+
+let user = null, error = null
 
 app.get('/', (req, res) => {
     error = null
-
+    
     res.send(`<!DOCTYPE html>
 <html>
     <head>
@@ -51,7 +54,7 @@ app.post('/register', (req, res) => {
     req.on('end', () => {
         const keyValues = data.split('&')
 
-        const user = {}
+        const user = { id: Date.now() }
 
         keyValues.forEach(keyValue => {
             const [key, value] = keyValue.split('=')
@@ -61,10 +64,10 @@ app.post('/register', (req, res) => {
 
         const { name, surname, username, password } = user
 
-        try {
-            logic.registerUser(name, surname, username, password)
-
+        if (name && surname && username && password) {
             error = null
+
+            users.push(user)
 
             res.send(`<!DOCTYPE html>
                     <html>
@@ -77,8 +80,8 @@ app.post('/register', (req, res) => {
                             <a href="/">go back</a>
                         </body>
                     </html>`)
-        } catch ({ message }) {
-            error = message
+        } else {
+            error = 'some of the fields are empty, please check them'
 
             res.redirect('/register')
         }
@@ -112,24 +115,22 @@ app.post('/login', (req, res) => {
     req.on('end', () => {
         const keyValues = data.split('&')
 
-        const user = {}
+        const _user = {}
 
         keyValues.forEach(keyValue => {
             const [key, value] = keyValue.split('=')
 
-            user[key] = value
+            _user[key] = value
         })
 
-        const { username, password } = user
+        user = users.find(({ username, password }) => username === _user.username && password === _user.password)
 
-        try {
-            logic.login(username, password)
-
+        if (user) {
             error = null
 
             res.redirect('/home')
-        } catch ({ message }) {
-            error = message
+        } else {
+            error = 'wrong credentials'
 
             res.redirect('/login')
         }
@@ -137,7 +138,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
-    if (logic.loggedIn)
+    if (user)
         res.send(`<!DOCTYPE html>
                 <html>
                     <head>
@@ -145,7 +146,7 @@ app.get('/home', (req, res) => {
                     </head>
                     <body>
                         <h1>Hello World!</h1>
-                        <p>Welcome ${logic._user.name}!</p>
+                        <p>Welcome ${user.name}!</p>
                         <a href="/logout">logout</a>
                     </body>
                 </html>`)
@@ -153,7 +154,7 @@ app.get('/home', (req, res) => {
 })
 
 app.get('/logout', (req, res) => {
-    logic.logout()
+    user = null
 
     res.redirect('/')
 })
@@ -167,7 +168,7 @@ app.get('/users', (req, res) => {
     <body>
         <h1>Hello World!</h1>
         <ul>
-            ${logic._users.map(user => `<li>${user.id} ${user.name} ${user.surname}</li>`).join('')}
+            ${users.map(user => `<li>${user.id} ${user.name} ${user.surname}</li>`).join('')}
         </ul>
         <a href="/">go back</a>
     </body>
