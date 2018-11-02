@@ -1,6 +1,9 @@
 const { User } = require('./data')
 
 const logic = {
+    _users: [], // { name: 'Peter', surname: 'Sellers', username: 'u', password: 'p' }
+    _user: null, // WARN! NO SENSE! should be multi-user
+
     registerUser(name, surname, username, password) {
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
@@ -12,47 +15,33 @@ const logic = {
         if (!username.trim()) throw Error('username is empty or blank')
         if (!password.trim()) throw Error('password is empty or blank')
 
-        let user = User.findByUsername(username)
+        let user = this._users.find(user => user.username === username)
 
         if (user) throw Error(`username ${username} already registered`)
 
         user = new User(name, surname, username, password)
 
-        user.save()
+        this._users.push(user)
     },
 
-    authenticateUser(username, password) {
+    loginUser(username, password) {
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
         if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
         if (!username.trim()) throw Error('username is empty or blank')
         if (!password.trim()) throw Error('password is empty or blank')
 
-        const user = User.findByUsername(username)
+        this._user = this._users.find(user => user.username === username && user.password === password)
 
-        if (!user || user.password !== password) throw Error('invalid username or password')
-
-        return user.id
+        if (!this._user) throw Error('invalid username or password')
     },
 
-    retrieveUser(id) {
-        if (typeof id !== 'number') throw TypeError(`${id} is not a number`)
+    get loggedIn() {
+        return !!this._user
+    },
 
-        const user = User.findById(id)
-
-        if (!user) throw Error(`user with id ${id} not found`)
-
-        const _user = new User(
-            user.name,
-            user.surname,
-            user.username
-        )
-
-        _user.id = user.id
-
-        delete _user.password
-
-        return _user
+    logout() {
+        this._user = null
     }
 }
 

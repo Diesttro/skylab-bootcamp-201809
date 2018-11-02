@@ -1,6 +1,5 @@
 const express = require('express')
-const session = require('express-session')
-const FileStore = require('session-file-store')(session)
+const cookieSession = require('cookie-session')
 const bodyParser = require('body-parser')
 const buildView = require('./helpers/build-view')
 const logic = require('./logic')
@@ -13,14 +12,9 @@ let error = null
 
 const formBodyParser = bodyParser.urlencoded({ extended: false })
 
-const mySession = session({ 
-    secret: 'my super secret', 
-    cookie: { maxAge: 60 * 60 * 24 },
-    resave: true,
-    saveUninitialized: true,
-    store: new FileStore({
-        path: './.sessions'
-    })
+const myCookieSession = cookieSession({
+    name: 'session',
+    keys: ['my secret 1', 'my secret 2']
 })
 
 app.get('/', (req, res) => {
@@ -68,7 +62,7 @@ app.get('/login', (req, res) => {
         <a href="/">go back</a>`))
 })
 
-app.post('/login', [formBodyParser, mySession], (req, res) => {
+app.post('/login', [formBodyParser, myCookieSession], (req, res) => {
     const { username, password } = req.body
 
     try {
@@ -86,7 +80,7 @@ app.post('/login', [formBodyParser, mySession], (req, res) => {
     }
 })
 
-app.get('/home', mySession, (req, res) => {
+app.get('/home', myCookieSession, (req, res) => {
     const id = req.session.userId
 
     if (id) {
@@ -97,7 +91,7 @@ app.get('/home', mySession, (req, res) => {
     } else res.redirect('/')
 })
 
-app.get('/logout', mySession, (req, res) => {
+app.get('/logout', myCookieSession, (req, res) => {
     req.session.userId = null
 
     res.redirect('/')

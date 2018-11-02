@@ -1,6 +1,5 @@
 const express = require('express')
 const session = require('express-session')
-const FileStore = require('session-file-store')(session)
 const bodyParser = require('body-parser')
 const buildView = require('./helpers/build-view')
 const logic = require('./logic')
@@ -17,10 +16,7 @@ const mySession = session({
     secret: 'my super secret', 
     cookie: { maxAge: 60 * 60 * 24 },
     resave: true,
-    saveUninitialized: true,
-    store: new FileStore({
-        path: './.sessions'
-    })
+    saveUninitialized: true
 })
 
 app.get('/', (req, res) => {
