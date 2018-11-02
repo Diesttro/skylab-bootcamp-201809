@@ -1,4 +1,3 @@
-require('dotenv').config()
 const express = require('express')
 const session = require('express-session')
 // const FileStore = require('session-file-store')(session)
@@ -8,11 +7,9 @@ const bodyParser = require('body-parser')
 const buildView = require('./helpers/build-view')
 const logic = require('./logic')
 
-const { argv: [, , port = process.env.PORT || 8080] } = process
+const { argv: [, , port = 8080] } = process
 
 const app = express()
-
-app.use(express.static('./public'))
 
 let error = null
 
@@ -42,7 +39,7 @@ app.get('/register', (req, res) => {
             <input type="password" name="password" placeholder="password">
             <button type="submit">Register</button>
         </form>
-        ${error ? `<p class="error">${error}</p>` : ''}
+        ${error ? `<p style="color: red">${error}</p>` : ''}
         <a href="/">go back</a>`))
 })
 
@@ -69,7 +66,7 @@ app.get('/login', (req, res) => {
             <input type="password" name="password" placeholder="password">
             <button type="submit">Login</button>
         </form>
-        ${error ? `<p class="error">${error}</p>` : ''}
+        ${error ? `<p style="color: red">${error}</p>` : ''}
         <a href="/">go back</a>`))
 })
 
