@@ -1,32 +1,18 @@
-require('dotenv').config()
 const express = require('express')
-const session = require('express-session')
-// const FileStore = require('session-file-store')(session)
-const sessionFileStore = require('session-file-store')
-const FileStore = sessionFileStore(session)
 const bodyParser = require('body-parser')
+const sessionIdMiddleware = require('./helpers/session-id-middleware')
 const buildView = require('./helpers/build-view')
 const logic = require('./logic')
 
-const { argv: [, , port = process.env.PORT || 8080] } = process
+const { argv: [, , port = 8080] } = process
 
 const app = express()
 
-app.use(express.static('./public'))
-
 let error = null
 
-const formBodyParser = bodyParser.urlencoded({ extended: false })
+const sessions = {}
 
-const mySession = session({ 
-    secret: 'my super secret', 
-    cookie: { maxAge: 60 * 60 * 24 },
-    resave: true,
-    saveUninitialized: true,
-    store: new FileStore({
-        path: './.sessions'
-    })
-})
+const formBodyParser = bodyParser.urlencoded({ extended: false })
 
 app.get('/', (req, res) => {
     error = null
@@ -42,7 +28,7 @@ app.get('/register', (req, res) => {
             <input type="password" name="password" placeholder="password">
             <button type="submit">Register</button>
         </form>
-        ${error ? `<p class="error">${error}</p>` : ''}
+        ${error ? `<p style="color: red">${error}</p>` : ''}
         <a href="/">go back</a>`))
 })
 
@@ -69,17 +55,17 @@ app.get('/login', (req, res) => {
             <input type="password" name="password" placeholder="password">
             <button type="submit">Login</button>
         </form>
-        ${error ? `<p class="error">${error}</p>` : ''}
+        ${error ? `<p style="color: red">${error}</p>` : ''}
         <a href="/">go back</a>`))
 })
 
-app.post('/login', [formBodyParser, mySession], (req, res) => {
+app.post('/login', [formBodyParser, sessionIdMiddleware], (req, res) => {
     const { username, password } = req.body
 
     try {
         const id = logic.authenticateUser(username, password)
 
-        req.session.userId = id
+        sessions[req.sid] = id
 
         error = null
 
@@ -91,8 +77,8 @@ app.post('/login', [formBodyParser, mySession], (req, res) => {
     }
 })
 
-app.get('/home', mySession, (req, res) => {
-    const id = req.session.userId
+app.get('/home', sessionIdMiddleware, (req, res) => {
+    const id = sessions[req.sid]
 
     if (id) {
         const user = logic.retrieveUser(id)
@@ -102,8 +88,8 @@ app.get('/home', mySession, (req, res) => {
     } else res.redirect('/')
 })
 
-app.get('/logout', mySession, (req, res) => {
-    req.session.userId = null
+app.get('/logout', sessionIdMiddleware, (req, res) => {
+    delete sessions[req.sid]
 
     res.redirect('/')
 })
