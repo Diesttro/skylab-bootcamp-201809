@@ -3,6 +3,8 @@ import data from './data'
 const { storage, PostIt, User } = data
 
 const logic = {
+  host: '192.168.0.35:5000',
+
   createPostIt(userId, text) {
     const postit = new PostIt(userId, text)
 
@@ -103,7 +105,7 @@ const logic = {
     if (!surname.trim()) throw Error('surname is empty or blank')
     if (!password.trim()) throw Error('password is empty or blank')
 
-    const endpoint = 'https://skylabcoders.herokuapp.com/api/user'
+    const endpoint = 'http://' + this.host + '/api/users'
     const params = {
       method: 'POST',
       headers: {
@@ -115,9 +117,7 @@ const logic = {
     return fetch(endpoint, params)
       .then(response => response.json())
       .then(response => {
-        if (response.error) throw Error(response.error)
-
-        return response.data.id
+        if (response.message) throw Error(response.message)
     })
   },
 
@@ -128,7 +128,7 @@ const logic = {
     if (!username.trim()) throw Error('username is empty or blank')
     if (!password.trim()) throw Error('password is empty or blank')
 
-    const endpoint = 'https://skylabcoders.herokuapp.com/api/auth'
+    const endpoint = 'http://' + this.host + '/api/auth'
     const params = {
       method: 'POST',
       headers: {
@@ -140,7 +140,26 @@ const logic = {
     return fetch(endpoint, params)
       .then(response => response.json())
       .then(response => {
-        if (response.error) throw Error(response.error)
+        if (response.message) throw Error(response.message)
+
+        return response.data
+      })
+  },
+
+  getUserPostits(uid) {
+    if (typeof uid !== 'string') throw TypeError(`${uid} is not a string`)
+    
+    if (!uid.trim()) throw Error('id is empty or blank')
+
+    const endpoint = 'http://' + this.host + '/api/users/' + uid + '/postits'
+    const params = {
+      method: 'GET'
+    }
+
+    return fetch(endpoint, params)
+      .then(response => response.json())
+      .then(response => {
+        if (response.message) throw Error(response.message)
 
         return response.data
       })

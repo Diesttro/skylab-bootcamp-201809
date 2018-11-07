@@ -32,8 +32,11 @@ class App extends Component {
     // debugger
 
     return logic.authUser(username, password)
-      .then(id =>
-        this.setState({ logIn: false, isLoggedIn: true })
+      .then(user =>
+        logic.getUserPostits(user.id)
+          .then(postits => {
+            this.setState({ logIn: false, isLoggedIn: true, user: { id: user.id, token: user.token, postits } })
+          })
       )
   }
 

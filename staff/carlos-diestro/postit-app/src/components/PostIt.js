@@ -6,7 +6,6 @@ import PostItList from './PostItList'
 class PostIt extends Component {
   state = {
     user: this.props.user,
-    items: logic.listPostIts(this.props.user.id)
   }
 
   render() {
@@ -18,8 +17,8 @@ class PostIt extends Component {
             <h5 className="text-center">de {this.state.user.name}</h5>
           </div>
           <Form onSubmit={this.handleSubmit} />
-          <a href="" onClick={this.handleClick}>Log Out</a>
-          <PostItList items={this.state.items} onRemoveItem={this.handleRemoveItem} />
+          <a href="#" onClick={this.handleClick}>Log Out</a>
+          <PostItList items={this.state.user.postits} onRemoveItem={this.handleRemoveItem} />
         </div>
       </div>
     )
