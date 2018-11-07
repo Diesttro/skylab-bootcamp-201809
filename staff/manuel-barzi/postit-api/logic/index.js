@@ -19,8 +19,6 @@ const logic = {
 
                 user = new User({ name, surname, username, password })
 
-                throw Error('system error!!!! v==v')
-
                 return user.save()
             })
     },

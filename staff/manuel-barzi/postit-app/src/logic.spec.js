@@ -14,7 +14,7 @@ const { expect } = require('chai')
 
 describe('logic', () => {
     describe('users', () => {
-        false && describe('register', () => {
+        !false && describe('register', () => {
             it('should succeed on correct data', () =>
                 logic.registerUser('John', 'Doe', `jd-${Math.random()}`, '123')
                     .then(() => expect(true).to.be.true)
@@ -27,7 +27,7 @@ describe('logic', () => {
                     .then(() => logic.registerUser('John', 'Doe', username, '123'))
                     .catch(err => {
                         expect(err).not.to.be.undefined
-                        expect(err.message).to.equal(`user with username "${username}" already exists`)
+                        expect(err.message).to.equal(`username ${username} already registered`)
                     })
             })
 
@@ -40,7 +40,7 @@ describe('logic', () => {
             // TODO other cases
         })
 
-        false && describe('login', () => {
+        !false && describe('login', () => {
             describe('with existing user', () => {
                 let username, password
 
@@ -200,7 +200,7 @@ describe('logic', () => {
             })
         })
 
-        describe('update', () => {
+        false && describe('update', () => {
             describe('with existing user', () => {
                 let username, password, text, postitId
 
