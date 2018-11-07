@@ -10,6 +10,8 @@ const jsonBodyParser = bodyParser.json()
 
 const router = express.Router()
 
+const { env: { JWT_SECRET } } = process
+
 router.post('/users', jsonBodyParser, (req, res) => {
     routeHandler(() => {
         const { name, surname, username, password } = req.body
