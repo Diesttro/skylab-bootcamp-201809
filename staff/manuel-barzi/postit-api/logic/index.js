@@ -51,6 +51,7 @@ const logic = {
                 _user.id = id
 
                 delete _user.password
+                delete _user.postits
 
                 return _user
             })
@@ -59,16 +60,18 @@ const logic = {
     /**
      * Adds a postit
      * 
-     * @param {number} id The user id
+     * @param {string} id The user id
      * @param {string} text The postit text
      * 
-     * @throws {TypeError} On non-numeric user id, or non-string postit text
-     * @throws {Error} On empty or blank postit text
+     * @throws {TypeError} On non-string user id, or non-string postit text
+     * @throws {Error} On empty or blank user id or postit text
      * 
      * @returns {Promise} Resolves on correct data, rejects on wrong user id
      */
     addPostit(id, text) {
-        if (typeof id !== 'number') throw TypeError(`${id} is not a number`)
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+
+        if (!id.trim().length) throw Error('id is empty or blank')
 
         if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
 
@@ -86,19 +89,38 @@ const logic = {
             })
     },
 
+    listPostits(id) {
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+
+        if (!id.trim().length) throw Error('id is empty or blank')
+
+        return User.findById(id)
+            .then(user => {
+                if (!user) throw Error(`user with id ${id} not found`)
+
+                return user.postits
+            })
+    },
+
     /**
      * Removes a postit
      * 
-     * @param {number} id The user id
-     * @param {number} postitId The postit id
+     * @param {string} id The user id
+     * @param {string} postitId The postit id
      * 
-     * @throws {TypeError} On non-numeric user id, or non-numeric postit id
+     * @throws {TypeError} On non-string user id, or non-string postit id
+     * @throws {Error} On empty or blank user id or postit text
      * 
      * @returns {Promise} Resolves on correct data, rejects on wrong user id, or postit id
      */
     removePostit(id, postitId) {
-        if (typeof id !== 'number') throw TypeError(`${id} is not a number`)
-        if (typeof postitId !== 'number') throw TypeError(`${postitId} is not a number`)
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+
+        if (!id.trim().length) throw Error('id is empty or blank')
+
+        if (typeof postitId !== 'string') throw TypeError(`${postitId} is not a string`)
+
+        if (!postitId.trim().length) throw Error('postit id is empty or blank')
 
         return User.findById(id)
             .then(user => {
@@ -127,8 +149,13 @@ const logic = {
     },
 
     modifyPostit(id, postitId, text) {
-        if (typeof id !== 'number') throw TypeError(`${id} is not a number`)
-        if (typeof postitId !== 'number') throw TypeError(`${postitId} is not a number`)
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+
+        if (!id.trim().length) throw Error('id is empty or blank')
+
+        if (typeof postitId !== 'string') throw TypeError(`${postitId} is not a string`)
+
+        if (!postitId.trim().length) throw Error('postit id is empty or blank')
 
         if(typeof text !== 'string') throw TypeError(`${text} is not a string`)
 

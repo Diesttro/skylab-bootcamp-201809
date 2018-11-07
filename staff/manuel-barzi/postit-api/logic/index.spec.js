@@ -15,7 +15,7 @@ describe('logic', () => {
 
     beforeEach(() => fs.writeFileSync(User._file, JSON.stringify([])))
 
-    afterEach(() => fs.writeFileSync(User._file, JSON.stringify([])))
+    // afterEach(() => fs.writeFileSync(User._file, JSON.stringify([])))
 
     describe('user', () => {
         !false && describe('register', () => {
@@ -109,20 +109,14 @@ describe('logic', () => {
                         expect(surname).to.equal(user.surname)
                         expect(username).to.equal(user.username)
                         expect(password).to.be.undefined
-                        expect(postits).to.exist
-                        expect(postits.length).to.equal(1)
-
-                        const [_postit] = postits
-
-                        expect(_postit.id).to.equal(postit.id)
-                        expect(_postit.text).to.equal(postit.text)
+                        expect(postits).not.to.exist
                     })
             )
         })
     })
 
-    false && describe('postits', () => {
-        false && describe('add', () => {
+    describe('postits', () => {
+        !false && describe('add', () => {
             let user, text
 
             beforeEach(() => {
@@ -159,11 +153,60 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        false && describe('remove', () => {
+        !false && describe('list', () => {
+            let user, postit, postit2
+
+            beforeEach(() => {
+                postit = new Postit({ text: 'hello text' })
+                postit2 = new Postit({ text: 'hello text 2' })
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', postits: [postit, postit2] })
+
+                fs.writeFileSync(User._file, JSON.stringify([user]))
+            })
+
+            it('should succeed on correct data', () =>
+                logic.listPostits(user.id)
+                    .then(postits => {
+                        const json = fs.readFileSync(User._file)
+
+                        const users = JSON.parse(json)
+
+                        expect(users.length).to.equal(1)
+
+                        const [_user] = users
+
+                        expect(_user.id).to.equal(user.id)
+
+                        const { postits: _postits } = _user
+
+                        expect(_postits.length).to.equal(2)
+
+                        expect(postits.length).to.equal(_postits.length)
+
+                        const [_postit, _postit2] = _postits
+
+                        expect(_postit.id).to.equal(postit.id)
+                        expect(_postit.text).to.equal(postit.text)
+
+                        expect(_postit2.id).to.equal(postit2.id)
+                        expect(_postit2.text).to.equal(postit2.text)
+
+                        const [__postit, __postit2] = postits
+
+                        expect(_postit.id).to.equal(__postit.id)
+                        expect(_postit.text).to.equal(__postit.text)
+
+                        expect(_postit2.id).to.equal(__postit2.id)
+                        expect(_postit2.text).to.equal(__postit2.text)
+                    })
+            )
+        })
+
+        !false && describe('remove', () => {
             let user, postit
 
             beforeEach(() => {
-                postit = new Postit('hello text')
+                postit = new Postit({ text: 'hello text' })
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', postits: [postit] })
 
                 fs.writeFileSync(User._file, JSON.stringify([user]))
@@ -189,11 +232,11 @@ describe('logic', () => {
             )
         })
 
-        false && describe('modify', () => {
+        !false && describe('modify', () => {
             let user, postit, newText
 
             beforeEach(() => {
-                postit = new Postit('hello text')
+                postit = new Postit({ text: 'hello text' })
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', postits: [postit] })
 
                 newText = `new-text-${Math.random()}`
