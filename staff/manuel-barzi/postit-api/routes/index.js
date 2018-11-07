@@ -17,12 +17,13 @@ router.post('/users', jsonBodyParser, (req, res) => {
         const { name, surname, username, password } = req.body
 
         return logic.registerUser(name, surname, username, password)
-            .then(() =>
+            .then(() => {
+                res.status(201)
+
                 res.json({
-                    status: 'OK',
                     message: `${username} successfully registered`
                 })
-            )
+            })
     }, res)
 })
 
