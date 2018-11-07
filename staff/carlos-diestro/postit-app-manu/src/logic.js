@@ -1,5 +1,5 @@
-// import data from './data'
-const data = require('./data')
+import data from './data'
+// const data = require('./data')
 
 const { Postit } = data
 
@@ -7,8 +7,6 @@ const logic = {
     _userId: sessionStorage.getItem('userId') || null,
     _token: sessionStorage.getItem('token') || null,
     _postits: [],
-    host: 'localhost',
-    port: '5000',
 
     registerUser(name, surname, username, password) {
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
@@ -20,20 +18,17 @@ const logic = {
         if (!surname.trim()) throw Error('surname is empty or blank')
         if (!username.trim()) throw Error('username is empty or blank')
         if (!password.trim()) throw Error('password is empty or blank')
-        
-        return fetch('http://' + this.host + ':' + this.port + '/api/users', {
+
+        return fetch('http://localhost:5000/api/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
             },
             body: JSON.stringify({ name, surname, username, password })
         })
+            .then(res => res.json())
             .then(res => {
-                debugger
-                
-                const json = res.json()
-                
-                if (res.status !== 201) throw Error(json.message)
+                if (res.error) throw Error(res.error)
             })
     },
 
@@ -44,9 +39,7 @@ const logic = {
         if (!username.trim()) throw Error('username is empty or blank')
         if (!password.trim()) throw Error('password is empty or blank')
 
-        debugger
-
-        return fetch('http://' + this.host + ':' + this.port + '/api/auth', {
+        return fetch('http://localhost:5000/api/auth', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
@@ -55,11 +48,9 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
-                if (res.message) throw Error(res.message)
+                if (res.error) throw Error(res.error)
 
                 const { id, token } = res.data
-
-                debugger
 
                 this._userId = id
                 this._token = token
@@ -87,15 +78,13 @@ const logic = {
 
         if (!text.trim()) throw Error('text is empty or blank')
 
-        this._postits.push(new Postit(text))
-
-        return fetch(`https://skylabcoders.herokuapp.com/api/user/${this._userId}`, {
-            method: 'PUT',
+        return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${this._token}`
             },
-            body: JSON.stringify({ postits: this._postits })
+            body: JSON.stringify({ text })
         })
             .then(res => res.json())
             .then(res => {
@@ -104,7 +93,7 @@ const logic = {
     },
 
     listPostits() {
-        return fetch(`https://skylabcoders.herokuapp.com/api/user/${this._userId}`, {
+        return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${this._token}`
@@ -114,22 +103,20 @@ const logic = {
             .then(res => {
                 if (res.error) throw Error(res.error)
 
-                return this._postits = res.data.postits || []
+                return this._postits = res.data || []
             })
     },
 
     deletePostit(id) {
-        if (typeof id !== 'number') throw new TypeError(`${id} is not a number`)
+        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
 
         this._postits = this._postits.filter(postit => postit.id !== id)
 
-        return fetch(`https://skylabcoders.herokuapp.com/api/user/${this._userId}`, {
-            method: 'PUT',
+        return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
+            method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${this._token}`
-            },
-            body: JSON.stringify({ postits: this._postits })
+            }
         })
             .then(res => res.json())
             .then(res => {
@@ -138,7 +125,7 @@ const logic = {
     },
 
     updatePostit(id, text) {
-        if (typeof id !== 'number') throw new TypeError(`${id} is not a number`)
+        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
 
         if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
 
@@ -148,13 +135,13 @@ const logic = {
 
         postit.text = text
 
-        return fetch(`https://skylabcoders.herokuapp.com/api/user/${this._userId}`, {
+        return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${this._token}`
             },
-            body: JSON.stringify({ postits: this._postits })
+            body: JSON.stringify({ text })
         })
             .then(res => res.json())
             .then(res => {
@@ -163,5 +150,5 @@ const logic = {
     }
 }
 
-// export default logic
-module.exports = logic
+export default logic
+// module.exports = logic

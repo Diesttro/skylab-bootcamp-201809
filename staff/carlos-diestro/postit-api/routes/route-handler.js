@@ -15,11 +15,11 @@ function routeHandler(callback, res) {
                 }
 
                 res.json({
-                    message
+                    error: message
                 })
             })
     } catch (err) {
-        const { message } = err
+        const { error: message } = err
 
         if (err instanceof TypeError || err instanceof ValueError) {
             res.status(400)
@@ -28,7 +28,7 @@ function routeHandler(callback, res) {
         }
 
         res.json({
-            message
+            error: message
         })
     }
 }

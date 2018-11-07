@@ -17,13 +17,12 @@ router.post('/users', jsonBodyParser, (req, res) => {
         const { name, surname, username, password } = req.body
 
         return logic.registerUser(name, surname, username, password)
-            .then(() => {
-                res.status(201)
-
+            .then(() =>
                 res.json({
+                    status: 'OK',
                     message: `${username} successfully registered`
                 })
-            })
+            )
     }, res)
 })
 
@@ -36,6 +35,7 @@ router.post('/auth', jsonBodyParser, (req, res) => {
                 const token = jwt.sign({ sub: id }, JWT_SECRET)
 
                 res.json({
+                    status: 'OK',
                     data: {
                         id,
                         token
@@ -54,6 +54,7 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
         return logic.retrieveUser(id)
             .then(user =>
                 res.json({
+                    status: 'OK',
                     data: user
                 })
             )
@@ -68,6 +69,7 @@ router.post('/users/:id/postits', [bearerTokenParser, jwtVerifier, jsonBodyParse
 
         return logic.addPostit(id, text)
             .then(() => res.json({
+                status: 'OK',
                 message: 'postit added'
             }))
 
@@ -82,6 +84,7 @@ router.get('/users/:id/postits', [bearerTokenParser, jwtVerifier], (req, res) =>
 
         return logic.listPostits(id)
             .then(postits => res.json({
+                status: 'OK',
                 data: postits
             }))
     }, res)
@@ -95,6 +98,7 @@ router.put('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, json
 
         return logic.modifyPostit(id, postitId, text)
             .then(() => res.json({
+                status: 'OK',
                 message: 'postit modified'
             }))
     }, res)
@@ -108,6 +112,7 @@ router.delete('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, j
 
         return logic.removePostit(id, postitId)
             .then(() => res.json({
+                status: 'OK',
                 message: 'postit removed'
             }))
     }, res)

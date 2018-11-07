@@ -14,7 +14,7 @@ const { expect } = require('chai')
 
 describe('logic', () => {
     describe('users', () => {
-        describe('register', () => {
+        false && describe('register', () => {
             it('should succeed on correct data', () =>
                 logic.registerUser('John', 'Doe', `jd-${Math.random()}`, '123')
                     .then(() => expect(true).to.be.true)
@@ -27,7 +27,7 @@ describe('logic', () => {
                     .then(() => logic.registerUser('John', 'Doe', username, '123'))
                     .catch(err => {
                         expect(err).not.to.be.undefined
-                        expect(err.message).to.equal(`user with username "${username}" already exists`)
+                        expect(err.message).to.equal(`username ${username} already registered`)
                     })
             })
 
@@ -107,8 +107,8 @@ describe('logic', () => {
         })
     })
 
-    false && describe('postits', () => {
-        false && describe('create', () => {
+    describe('postits', () => {
+        describe('create', () => {
             describe('with existing user', () => {
                 let username, password, text
 
@@ -131,8 +131,8 @@ describe('logic', () => {
             })
         })
 
-        false && describe('list', () => {
-            false && describe('with existing user', () => {
+        describe('list', () => {
+            describe('with existing user', () => {
                 let username, password, text
 
                 beforeEach(() => {
@@ -169,7 +169,7 @@ describe('logic', () => {
             })
         })
 
-        false && describe('delete', () => {
+        describe('delete', () => {
             describe('with existing user', () => {
                 let username, password, text, postitId
 
@@ -200,7 +200,7 @@ describe('logic', () => {
             })
         })
 
-        false && describe('update', () => {
+        describe('update', () => {
             describe('with existing user', () => {
                 let username, password, text, postitId
 

@@ -5,6 +5,6 @@ class Postit {
     }
 }
 
-// export default { Postit }
+export default { Postit }
 
-module.exports = { Postit }
+// module.exports = { Postit }
