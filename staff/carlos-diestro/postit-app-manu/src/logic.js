@@ -4,150 +4,188 @@ import data from './data'
 const { Postit } = data
 
 const logic = {
-    _userId: sessionStorage.getItem('userId') || null,
-    _token: sessionStorage.getItem('token') || null,
-    _postits: [],
+  _userId: sessionStorage.getItem('userId') || null,
+  _token: sessionStorage.getItem('token') || null,
+  _postits: [],
 
-    registerUser(name, surname, username, password) {
-        if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
-        if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
-        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
+  registerUser(name, surname, username, password) {
+    if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
+    if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
+    if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
+    if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
-        if (!name.trim()) throw Error('name is empty or blank')
-        if (!surname.trim()) throw Error('surname is empty or blank')
-        if (!username.trim()) throw Error('username is empty or blank')
-        if (!password.trim()) throw Error('password is empty or blank')
+    if (!name.trim()) throw Error('name is empty or blank')
+    if (!surname.trim()) throw Error('surname is empty or blank')
+    if (!username.trim()) throw Error('username is empty or blank')
+    if (!password.trim()) throw Error('password is empty or blank')
 
-        return fetch('http://localhost:5000/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({ name, surname, username, password })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-    },
+    return fetch('http://localhost:5000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify({ name, surname, username, password })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
+      })
+  },
 
-    login(username, password) {
-        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
+  login(username, password) {
+    if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
+    if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
 
-        if (!username.trim()) throw Error('username is empty or blank')
-        if (!password.trim()) throw Error('password is empty or blank')
+    if (!username.trim()) throw Error('username is empty or blank')
+    if (!password.trim()) throw Error('password is empty or blank')
 
-        return fetch('http://localhost:5000/api/auth', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
-            body: JSON.stringify({ username, password })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
+    return fetch('http://localhost:5000/api/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      body: JSON.stringify({ username, password })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
 
-                const { id, token } = res.data
+        const { id, token } = res.data
 
-                this._userId = id
-                this._token = token
+        this._userId = id
+        this._token = token
 
-                sessionStorage.setItem('userId', id)
-                sessionStorage.setItem('token', token)
-            })
-    },
+        sessionStorage.setItem('userId', id)
+        sessionStorage.setItem('token', token)
+      })
+  },
 
-    get loggedIn() {
-        return !!this._userId
-    },
+  getUserData() {
+    return fetch(`http://localhost:5000/api/users/${this._userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this._token}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
 
-    logout() {
-        this._postits = []
-        this._userId = null
-        this._token = null
+        return res.data || []
+      })
+  },
 
-        sessionStorage.removeItem('userId')
-        sessionStorage.removeItem('token')
-    },
+  updateUserData(currentPass, newPass) {
+    if (typeof currentPass !== 'string') throw TypeError(`${currentPass} is not a string`)
+    if (typeof newPass !== 'string') throw TypeError(`${newPass} is not a string`)
 
-    createPostit(text) {
-        if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+    if (!currentPass.trim()) throw Error('current password is empty or blank')
+    if (!newPass.trim()) throw Error('new password is empty or blank')
 
-        if (!text.trim()) throw Error('text is empty or blank')
+    return fetch(`http://localhost:5000/api/users/${this._userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${this._token}`
+      },
+      body: JSON.stringify({ password: currentPass, new_password: newPass })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
 
-        return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': `Bearer ${this._token}`
-            },
-            body: JSON.stringify({ text })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-    },
+        return res
+      })
+  },
 
-    listPostits() {
-        return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${this._token}`
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
+  get loggedIn() {
+    return !!this._userId
+  },
 
-                return this._postits = res.data || []
-            })
-    },
+  logout() {
+    this._postits = []
+    this._userId = null
+    this._token = null
 
-    deletePostit(id) {
-        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+    sessionStorage.removeItem('userId')
+    sessionStorage.removeItem('token')
+  },
 
-        this._postits = this._postits.filter(postit => postit.id !== id)
+  createPostit(text) {
+    if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
 
-        return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${this._token}`
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-    },
+    if (!text.trim()) throw Error('text is empty or blank')
 
-    updatePostit(id, text) {
-        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+    return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${this._token}`
+      },
+      body: JSON.stringify({ text })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
+      })
+  },
 
-        if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+  listPostits() {
+    return fetch(`http://localhost:5000/api/users/${this._userId}/postits`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this._token}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
 
-        if (!text.trim()) throw Error('text is empty or blank')
+        return this._postits = res.data || []
+      })
+  },
 
-        const postit = this._postits.find(postit => postit.id === id)
+  deletePostit(id) {
+    if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
 
-        postit.text = text
+    this._postits = this._postits.filter(postit => postit.id !== id)
 
-        return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': `Bearer ${this._token}`
-            },
-            body: JSON.stringify({ text })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-    }
+    return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${this._token}`
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
+      })
+  },
+
+  updatePostit(id, text) {
+    if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+
+    if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+
+    if (!text.trim()) throw Error('text is empty or blank')
+
+    const postit = this._postits.find(postit => postit.id === id)
+
+    postit.text = text
+
+    return fetch(`http://localhost:5000/api/users/${this._userId}/postits/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Bearer ${this._token}`
+      },
+      body: JSON.stringify({ text })
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.error) throw Error(res.error)
+      })
+  }
 }
 
 export default logic

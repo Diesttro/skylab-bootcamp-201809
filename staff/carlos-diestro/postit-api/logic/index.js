@@ -58,6 +58,19 @@ const logic = {
             })
     },
 
+    modifyUser(id, password, newPassword) {
+        return User.findById(id)
+            .then(user => {
+                if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+                if (password !== user.password) throw Error('current password does not match')
+
+                user.password = newPassword
+
+                return user.save()
+            })
+    },
+
     /**
      * Adds a postit
      * 
