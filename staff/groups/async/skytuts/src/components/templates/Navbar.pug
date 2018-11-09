@@ -1,0 +1,11 @@
+nav
+  ul
+    li
+      NavLink(to='/') Home
+    li(@if='!authenticated')
+      NavLink(to='/login') Login
+    li(@if='!authenticated')
+      NavLink(to='/register') Register
+    li(@if='authenticated')
+      NavLink(to='/profile') Favorites
+    li(@if='authenticated') {logout}

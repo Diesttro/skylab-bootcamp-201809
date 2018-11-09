@@ -6,7 +6,7 @@ body {
   padding-bottom: 0;
 }
 
-p, main .news-content .news-content__flex-container .p__main, .main-content .p--main-content {
+p, .main-content .p--main-content, main .news-content .news-content__flex-container .p__main {
   font-family: "Open Sans";
   font-weight: 400;
 }
@@ -16,6 +16,8 @@ header {
 }
 
 .flex-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
 }
@@ -40,12 +42,14 @@ header {
   margin: auto;
   padding-top: 20px;
 }
+
 .header-container__logo {
   height: 47px;
   margin-top: 40px;
   margin-left: 30px;
 }
-.header-container__button, main .news-content .news-content__flex-container .header-container__button--learn, .main-content .header-container__button--main-content {
+
+.header-container__button, .main-content .header-container__button--main-content, main .news-content .news-content__flex-container .header-container__button--learn {
   height: 50px;
   padding-left: 35px;
   padding-right: 35px;
@@ -59,10 +63,12 @@ header {
   margin-top: 35px;
   margin-left: 50px;
 }
+
 .header-container .nav {
   margin-top: 51px;
   padding-left: 15px;
 }
+
 .header-container .nav__item, .header-container .nav__item--first {
   display: inline;
   font-family: "Open Sans";
@@ -72,14 +78,17 @@ header {
   padding: 16px 15px;
   border-right: 1px solid #b9d2d7;
 }
+
 .header-container .nav__item--first {
   border-top-left-radius: 7px;
   border-bottom-left-radius: 7px;
 }
+
 .header-container .nav__item a, .header-container .nav__item--first a {
   text-decoration: none;
   color: #3e3e36;
 }
+
 .header-container .nav__search-item-container {
   background-color: #d1eef4;
   padding: 15px 15px;
@@ -89,6 +98,7 @@ header {
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
 }
+
 .header-container .nav__search-item-container .nav__search-item {
   width: 150px;
   background-image: url("./images/search.png");
@@ -101,19 +111,24 @@ header {
 }
 
 .main-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   margin-top: 30px;
   margin-left: 50px;
 }
+
 .main-content__text {
   margin-left: 40px;
   margin-top: 40px;
 }
+
 .main-content .p--main-content {
   color: #4c7279;
   font-weight: 600;
   font-size: 0.87em;
 }
+
 .main-content .header-container__button--main-content {
   padding-left: 60px;
   padding-right: 60px;
@@ -134,28 +149,40 @@ main {
   z-index: 1000;
   position: relative;
 }
+
 main .news-content {
   font-family: Arial Black;
   margin-left: 20px;
   margin-right: 20px;
 }
+
 main .news-content .news-content__flex-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   margin-top: 30px;
-  justify-content: space-between;
-  align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
+
 main .news-content .news-content__flex-container .news-content__flex-container__item {
   width: 210px;
 }
+
 main .news-content .news-content__flex-container h3 {
   margin-top: -25px;
 }
+
 main .news-content .news-content__flex-container .p__main {
   font-size: 14px;
   margin-top: -10px;
 }
+
 main .news-content .news-content__flex-container .header-container__button--learn {
   margin-left: 0px;
   padding-left: 15px;
@@ -175,22 +202,31 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
 footer .footer-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
   margin-top: 30px;
-  justify-content: space-around;
-  align-items: top;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: top;
+      -ms-flex-align: top;
+          align-items: top;
 }
+
 footer .footer-container__title-item {
   color: #fff;
   font-family: "Open Sans";
 }
+
 footer .footer-container__list {
   list-style: none;
   padding-left: 0px;
   margin-top: -15px;
 }
+
 footer .footer-container__list .footer-container__link {
   text-decoration: none;
   color: gray;
@@ -199,13 +235,14 @@ footer .footer-container__list .footer-container__link {
   font-size: 12px;
   margin-bottom: 25px;
 }
+
 footer .footer__box {
   text-align: center;
 }
+
 footer .footer__box .footer__box__copy {
   color: gray;
   font-family: "Open Sans";
   font-size: 12px;
 }
-
 /*# sourceMappingURL=style.css.map */

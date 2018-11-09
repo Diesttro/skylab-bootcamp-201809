@@ -1,0 +1,12 @@
+main 
+    #search
+        Navbar
+        input(onChange='{this.filterPersonalized}', type='text', placeholder='Search course...')
+        img(src='../images/cover.jpeg', alt='cover')
+        canvas#canvas
+    div(className='main')
+        section(className='list-container') {track}              
+            | {links}
+            p(@if='error') {error}
+        section(className='cards-container') {card}
+            div .

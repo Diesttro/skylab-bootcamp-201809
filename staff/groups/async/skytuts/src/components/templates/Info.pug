@@ -1,0 +1,18 @@
+div
+  Navbar
+  div(className='info')
+    div(className='division')
+    header(className='header-info')
+      Favorite(@params='{slug}')
+      img(className='course-img' src='{course.image || defaultData().image}' alt='course-img')
+      div(className='text')
+        h1(className='title') {course.title || defaultData().title}
+        h5(className='duration') 
+          | Expected duration: {course.expected_duration} {course.expected_duration_unit}
+      div(className='bottom-info')
+          div(className='knowledge-container')
+              h3 Required knowledge
+              | {markdown}
+              iframe(@if='course.teaser_video.youtube_url' height='315', src="{`https://www.youtube.com/embed/${course.teaser_video.youtube_url.split('=')[1]}`}", title='teaser', frameBorder='0', allow='autoplay; encrypted-media', allowFullScreen='')
+          h1(className='instructor-title') Instructors
+          | {instructor}

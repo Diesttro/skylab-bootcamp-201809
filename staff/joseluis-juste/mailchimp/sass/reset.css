@@ -1,0 +1,34 @@
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  overflow: hidden;
+}
+
+html, body {
+  height: 100vh;
+  font-family: Arial;
+}
+
+body {
+  margin: 0;
+  overflow: scroll;
+}
+
+p {
+  margin: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+h2, h3 {
+  margin: 0;
+}
+/*# sourceMappingURL=reset.css.map */

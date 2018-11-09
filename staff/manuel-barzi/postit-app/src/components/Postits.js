@@ -14,22 +14,22 @@ class Postits extends Component {
     }
 
     handleSubmit = text =>
-        logic.createPostit(text)
+        logic.addPostit(text)
             .then(() => logic.listPostits())
             .then(postits => this.setState({ postits }))
 
     // TODO error handling!
 
-    handleDeletePost = id =>
-        logic.deletePostit(id)
+    handleRemovePostit = id =>
+        logic.removePostit(id)
             .then(() => logic.listPostits())
             .then(postits => this.setState({ postits }))
 
     // TODO error handling!
 
 
-    handleUpdatePost = (id, text) =>
-        logic.updatePostit(id, text)
+    handleModifyPostit = (id, text) =>
+        logic.modifyPostit(id, text)
             .then(() => logic.listPostits())
             .then(postits => this.setState({ postits }))
 
@@ -43,7 +43,7 @@ class Postits extends Component {
             <InputForm onSubmit={this.handleSubmit} />
 
             <section>
-                {this.state.postits.map(postit => <Post key={postit.id} text={postit.text} id={postit.id} onDeletePost={this.handleDeletePost} onUpdatePost={this.handleUpdatePost} />)}
+                {this.state.postits.map(postit => <Post key={postit.id} text={postit.text} id={postit.id} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} />)}
             </section>
         </div>
     }

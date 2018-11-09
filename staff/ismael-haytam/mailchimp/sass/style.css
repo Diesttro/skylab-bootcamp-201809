@@ -1,0 +1,280 @@
+@import url("https://fonts.googleapis.com/css?family=Ubuntu");
+body {
+  background: #62b9db;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-family: 'Ubuntu', sans-serif;
+  height: 100vh;
+  margin: 0;
+  background-image: url("../images/noisepattern.png");
+}
+
+.division {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 530px;
+  background: #46bdd4;
+  -webkit-box-shadow: 0 1px 0 0px #aee0e2;
+          box-shadow: 0 1px 0 0px #aee0e2;
+}
+
+header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+header img {
+  height: 350px;
+  width: 350px;
+  margin-left: 10%;
+}
+
+header article {
+  margin-left: 10px;
+}
+
+header article h1 {
+  color: white;
+  font-size: 4em;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+header article p {
+  color: #394f6d;
+}
+
+header article button {
+  position: relative;
+  width: 35%;
+  height: 50px;
+  margin-top: 15px;
+  border-radius: 7px;
+  border: 1px solid #df500d;
+  color: white;
+  font-size: 1.1em;
+  cursor: pointer;
+  background: #f14c36;
+  outline: 0;
+}
+
+header article button::before {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 10px;
+  content: "";
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(255, 255, 255, 0.1)), color-stop(50%, transparent));
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 50%, transparent 50%);
+}
+
+.container {
+  width: 980px;
+  height: 1000px;
+  margin-top: 20px;
+}
+
+.login {
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: row-reverse;
+          flex-direction: row-reverse;
+  margin-right: 20px;
+}
+
+.menu {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.menu img {
+  width: 15%;
+  height: 40px;
+  margin-top: 20px;
+}
+
+.menu button {
+  position: relative;
+  width: 15%;
+  height: 50px;
+  margin-top: 15px;
+  border-radius: 10px;
+  border: 1px solid gray;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  background: #2c2b2b;
+  outline: 0;
+}
+
+.menu button::before {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 10px;
+  content: "";
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(50%, rgba(255, 255, 255, 0.1)), color-stop(50%, transparent));
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 50%, transparent 50%);
+}
+
+.menu ul {
+  background-color: #d1eef5;
+  width: 65%;
+  line-height: 50px;
+  list-style: none;
+  padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-radius: 8px;
+}
+
+.menu ul li {
+  padding: 0 15px;
+}
+
+.menu ul li:not(:last-child) {
+  border-right: 1px solid gainsboro;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #2f4949;
+}
+
+.menu ul li input {
+  border-radius: 5px;
+  border: 1px solid gainsboro;
+  height: 25px;
+  outline: 0;
+  padding-left: 5px;
+  background-image: url("../images/search.png");
+  background-repeat: no-repeat;
+  background-position: 95% 50%;
+}
+
+section {
+  background: #f0f0f0;
+  border-radius: 10px 10px 0 0;
+  padding-top: 5px;
+  height: 470px;
+  padding-bottom: 10px;
+}
+
+section h1 {
+  margin-left: 20px;
+}
+
+section .news {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+section .news article {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 22%;
+}
+
+section .news article h5, section .news article h2 {
+  margin-bottom: 0;
+}
+
+section .news article h2 {
+  margin-top: 2px;
+}
+
+section .news article p {
+  font-size: .8em;
+}
+
+section .news article a {
+  text-decoration: none;
+  background: #181717;
+  color: white;
+  border-radius: 5px;
+  font-size: .9em;
+  padding: 4px 0 4px 15px;
+  background-image: url("../images/arrows.png");
+  background-repeat: no-repeat;
+  background-position: 95% 7px;
+}
+
+footer {
+  background: #181717;
+  width: 100%;
+  min-height: 400px;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+footer .info {
+  width: 980px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+footer .info ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+footer .info ul a {
+  text-decoration: none;
+  color: #8b8b8b;
+  font-size: .8em;
+}
+
+footer .copy p {
+  margin-top: 80px;
+  color: #8b8b8b;
+  font-size: .9em;
+  text-align: center;
+}
+/*# sourceMappingURL=style.css.map */

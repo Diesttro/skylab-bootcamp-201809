@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "28f54acc-8de8-41ea-b25d-5ac1ade08191",
+		"name": "Post-It API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"mb_2\",\n\t\"password\": \"123\",\n\t\"name\": \"manuel\",\n\t\"surname\": \"barzi\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"mb\",\n\t\"password\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1ODgyMDB9.GoGPAJ_mhE3-ALxUsAqKHgjw4_s7yVMKBWJeunx0EJE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"my post-it 2\" }"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List postits",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"my post-it\" }"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"my new post-it 3\" }"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits/f0ae412f-1278-455a-b229-9fc35cd3350a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits",
+						"f0ae412f-1278-455a-b229-9fc35cd3350a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits/0f28ca62-cc5c-4fd9-8191-e1879678ae0d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits",
+						"0f28ca62-cc5c-4fd9-8191-e1879678ae0d"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

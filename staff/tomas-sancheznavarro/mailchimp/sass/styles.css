@@ -1,0 +1,215 @@
+html, body {
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+ul {
+  margin: 0;
+}
+
+/* GENERAL COLORS */
+/* HEADER COLORS */
+/* FOOTER COLORS */
+/* NAV BAR COLOR */
+.wrap {
+  margin: 0 auto;
+  width: 1050px;
+}
+
+body {
+  background-color: #000;
+}
+
+header {
+  background-color: #45BCD2;
+  padding: 50px 86px;
+}
+
+.header__login {
+  display: block;
+  text-decoration: none;
+  color: white;
+  text-align: right;
+  padding-bottom: 10px;
+}
+
+.header__section1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.header__section1__div1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 50%;
+}
+
+.header__section1__mainlogo {
+  padding-right: 50px;
+}
+
+li {
+  display: inline;
+}
+
+.header__section1__div2 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 50%;
+}
+
+.header__section1__div2__nav {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  color: white;
+}
+
+.header__section1__div2__nav-menu {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  list-style: none;
+  background-color: #45BCD2;
+}
+
+.signup-button {
+  background-color: #50514B;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  -webkit-box-shadow: inset 0px 25px 0px rgba(255, 255, 255, 0.14);
+          box-shadow: inset 0px 25px 0px rgba(255, 255, 255, 0.14);
+}
+
+.header__section2 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.signup-button--free {
+  background-color: #E95C41;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  -webkit-box-shadow: inset 0px 24px 0px rgba(255, 255, 255, 0.14);
+          box-shadow: inset 0px 24px 0px rgba(255, 255, 255, 0.14);
+}
+
+.header__section2__div2__text {
+  color: #036B83;
+}
+
+main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-image: url("images/noisepattern.png");
+  background-repeat: repeat;
+  padding: 50px 86px;
+}
+
+.banner__title {
+  display: inline-block;
+}
+
+.card-container {
+  position: relative;
+  top: -104px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  background-color: #F0F0F0;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.article-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.article {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.footer {
+  background-color: #191814;
+  height: 300px;
+  font-size: 12px;
+  padding: 50px 86px;
+  color: gray;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.copy-footer {
+  display: inline-block;
+  color: white;
+}
+
+.footer__list__container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  display: flex;
+}
+/*# sourceMappingURL=styles.css.map */

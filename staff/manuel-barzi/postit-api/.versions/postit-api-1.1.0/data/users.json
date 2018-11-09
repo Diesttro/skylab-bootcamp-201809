@@ -1,0 +1,18 @@
+[
+    {
+        "id": "e523c4f1-c69a-4507-bc6c-6e8529f667a4",
+        "name": "manuel",
+        "surname": "barzi",
+        "username": "mb",
+        "password": "123",
+        "postits": []
+    },
+    {
+        "id": "4754153f-7d2f-442d-bf2a-9b10068f5dd2",
+        "name": "manuel",
+        "surname": "barzi",
+        "username": "mb2",
+        "password": "123",
+        "postits": []
+    }
+]

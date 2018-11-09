@@ -7,6 +7,7 @@ import Landing from './components/Landing'
 import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
+logic.url = 'http://localhost:5000/api'
 
 class App extends Component {
     state = { error: null }
