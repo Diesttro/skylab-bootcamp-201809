@@ -1,18 +1,27 @@
 require('dotenv').config()
 
+const { MongoClient } = require('mongodb')
 const express = require('express')
 const package = require('./package.json')
 const router = require('./routes')
 const cors = require('./utils/cors')
 
-const { env: { PORT } } = process
+const { env: { PORT, MONGO_URL } } = process
 
-const { argv: [, , port = PORT || 8080] } = process
+const client = new MongoClient(MONGO_URL, { useNewUrlParser: true })
 
-const app = express()
+client.connect()
+    .then(() => {
+        console.log(`db server running at ${MONGO_URL}`)
+        
+        const { argv: [, , port = PORT || 8080] } = process
 
-app.use(cors)
+        const app = express()
 
-app.use('/api', router)
+        app.use(cors)
 
-app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
+        app.use('/api', router)
+
+        app.listen(port, () => console.log(`${package.name} ${package.version} up and running on port ${port}`))
+    })
+    .catch(console.error)

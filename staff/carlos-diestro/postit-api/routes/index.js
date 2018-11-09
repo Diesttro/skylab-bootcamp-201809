@@ -60,16 +60,18 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
-router.put('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { sub, params: { id }, body: { password, new_password } } = req
+        const { params: { id }, sub, body: { name, surname, username, newPassword, password } } = req
 
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.modifyUser(id, password, new_password)
-            .then(() => res.json({
-                message: 'user modified'
-            }))
+        return logic.updateUser(id, name ? name : null, surname ? surname : null, username ? username : null, newPassword ? newPassword : null, password)
+            .then(() =>
+                res.json({
+                    message: 'user updated'
+                })
+            )
     }, res)
 })
 

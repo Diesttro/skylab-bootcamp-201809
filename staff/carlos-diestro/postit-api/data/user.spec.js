@@ -1,127 +1,128 @@
-const fs = require('fs')
+require('dotenv').config()
+
+const { MongoClient } = require('mongodb')
 const { expect } = require('chai')
 const { User } = require('.')
 
+const { env: { MONGO_URL } } = process
+
 describe('User (model)', () => {
-    before(() => {
-        User._file = './data/users.spec.json'
+  let client, users
+
+  before(() => {
+    client = new MongoClient(MONGO_URL, { useNewUrlParser: true })
+
+    return client.connect()
+      .then(() => {
+        const db = client.db('postit-test')
+
+        users = db.collection('users')
+
+        User._collection = users
+      })
+  })
+
+  describe('save', () => {
+    let name, surname, username, password
+
+    beforeEach(() => {
+      name = `name-${Math.random()}`
+      surname = `surname-${Math.random()}`
+      username = `username-${Math.random()}`
+      password = `password-${Math.random()}`
+
+      return users.deleteMany()
     })
 
-    describe('save', () => {
-        let name, surname, username, password
+    it('should succeed on correct data', () =>
+      new User({ name, surname, username, password }).save()
+        .then(() => users.find().toArray())
+        .then(_users => {
+          expect(_users.length).to.equal(1)
 
-        beforeEach(() => {
-            name = `name-${Math.random()}`
-            surname = `surname-${Math.random()}`
-            username = `username-${Math.random()}`
-            password = `password-${Math.random()}`
+          const [user] = _users
 
-            fs.writeFileSync(User._file, JSON.stringify([]))
+          expect(user.name).to.equal(name)
+          expect(user.surname).to.equal(surname)
+          expect(user.username).to.equal(username)
+          expect(user.password).to.equal(password)
         })
+    )
 
-        it('should succeed on correct data', () =>
-            new User({ name, surname, username, password }).save()
-                .then(() => {
-                    const json = fs.readFileSync(User._file)
+    describe('when user already exists', () => {
+      let name, surname, username, password
 
-                    const users = JSON.parse(json)
+      beforeEach(() => {
+        name = `name-${Math.random()}`
+        surname = `surname-${Math.random()}`
+        username = `username-${Math.random()}`
+        password = `password-${Math.random()}`
 
-                    debugger
+        return new User({ name, surname, username, password }).save()
+      })
 
-                    expect(users.length).to.equal(1)
+      it('should succeed on correct username', () => {
+        return users.find().toArray()
+          .then(_users => {
+            expect(_users.length).to.equal(1)
 
-                    const [user] = users
+            let [user] = _users
 
-                    expect(user.name).to.equal(name)
-                    expect(user.surname).to.equal(surname)
-                    expect(user.username).to.equal(username)
-                    expect(user.password).to.equal(password)
-                })
-        )
+            expect(user).to.exist
 
-        describe('when user already exists', () => {
-            let name, surname, username, password, id
+            expect(user.name).to.equal(name)
+            expect(user.surname).to.equal(surname)
+            expect(user.username).to.equal(username)
+            expect(user.password).to.equal(password)
 
-            beforeEach(() => {
-                name = `name-${Math.random()}`
-                surname = `surname-${Math.random()}`
-                username = `username-${Math.random()}`
-                password = `password-${Math.random()}`
+            const newName = `${name}-${Math.random()}`
 
-                const user = new User({ name, surname, username, password })
+            const _user = new User({ name: newName, surname, username, password })
 
-                id = user.id
+            _user.id = user.id
 
-                fs.writeFileSync(User._file, JSON.stringify([user]))
-            })
+            return _user.save()
+              .then(() => users.find().toArray())
+              .then(__users => {
+                expect(__users.length).to.equal(1)
 
-            it('should succeed on correct username', () => {
-                let json = fs.readFileSync(User._file)
+                let [modifiedUser] = __users
 
-                let users = JSON.parse(json)
+                expect(modifiedUser).to.exist
+                expect(modifiedUser.name).to.equal(newName)
+                expect(modifiedUser.surname).to.equal(surname)
+                expect(modifiedUser.username).to.equal(username)
+                expect(modifiedUser.password).to.equal(password)
+              })
+          })
+      })
+    })
+  })
 
-                expect(users.length).to.equal(1)
+  describe('findByUsername', () => {
+    let name, surname, username, password
 
-                let [user] = users
+    beforeEach(() => {
+      name = `name-${Math.random()}`
+      surname = `surname-${Math.random()}`
+      username = `username-${Math.random()}`
+      password = `password-${Math.random()}`
 
-                expect(user).to.exist
-
-                expect(user.name).to.equal(name)
-                expect(user.surname).to.equal(surname)
-                expect(user.username).to.equal(username)
-                expect(user.password).to.equal(password)
-
-                const newName = `${name}-${Math.random()}`
-
-                const _user = new User({ name: newName, surname, username, password })
-
-                _user.id = id
-
-                return _user.save()
-                    .then(() => {
-                        json = fs.readFileSync(User._file)
-
-                        users = JSON.parse(json)
-
-                        expect(users.length).to.equal(1)
-
-                        user = users[0]
-
-                        expect(user).to.exist
-
-                        expect(user.name).to.equal(newName)
-                        expect(user.surname).to.equal(surname)
-                        expect(user.username).to.equal(username)
-                        expect(user.password).to.equal(password)
-                    })
-            })
-        })
+      return new User({ name, surname, username, password }).save()
     })
 
-    describe('findByUsername', () => {
-        let name, surname, username, password
+    it('should succeed on correct username', () =>
+      User.findByUsername(username)
+        .then(user => {
+          //debugger
+          expect(user).to.exist
+          //expect(user).to.be.instanceOf(User)
 
-        beforeEach(() => {
-            name = `name-${Math.random()}`
-            surname = `surname-${Math.random()}`
-            username = `username-${Math.random()}`
-            password = `password-${Math.random()}`
-
-            fs.writeFileSync(User._file, JSON.stringify([new User({ name, surname, username, password })]))
+          expect(user.name).to.equal(name)
+          expect(user.surname).to.equal(surname)
+          expect(user.username).to.equal(username)
+          expect(user.password).to.equal(password)
         })
-
-        it('should succeed on correct username', () =>
-            User.findByUsername(username)
-                .then(user => {
-                    expect(user).to.exist
-                    expect(user).to.be.instanceOf(User)
-
-                    expect(user.name).to.equal(name)
-                    expect(user.surname).to.equal(surname)
-                    expect(user.username).to.equal(username)
-                    expect(user.password).to.equal(password)
-                })
-
-        )
-    })
+    )
+  })
 })
