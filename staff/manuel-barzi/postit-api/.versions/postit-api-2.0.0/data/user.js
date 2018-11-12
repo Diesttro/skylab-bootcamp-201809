@@ -1,4 +1,3 @@
-const fs = require('fs')
 const uid = require('uuid/v4')
 
 class User {

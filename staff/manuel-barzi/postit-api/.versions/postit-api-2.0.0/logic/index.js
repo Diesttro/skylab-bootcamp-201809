@@ -13,7 +13,7 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
-        return User.findOne({ username })
+        return User.findByUsername(username)
             .then(user => {
                 if (user) throw new AlreadyExistsError(`username ${username} already registered`)
 
@@ -95,7 +95,7 @@ const logic = {
                     name != null && (user.name = name)
                     surname != null && (user.surname = surname)
                     newPassword != null && (user.password = newPassword)
-
+    
                     return user.save()
                 }
             })

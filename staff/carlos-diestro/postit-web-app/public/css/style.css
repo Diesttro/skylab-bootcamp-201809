@@ -1,0 +1,48 @@
+.post-it button {
+  background-color: inherit;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+}
+.post-it textarea {
+  color: inherit;
+  border: none;
+  width: 100%;
+  resize: none;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .checkbox {
+  font-weight: 400;
+}
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input {
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+.form-signin input:first-of-type {
+  margin-bottom: -1px;
+  border-top-right-radius: 0.25rem;
+  border-top-left-radius: 0.25rem;
+}
+.form-signin input:last-of-type {
+  margin-bottom: 10px;
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+/*# sourceMappingURL=style.css.map */

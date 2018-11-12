@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h5(class='text-center mb-3') de #{name}
+  form(action='/home', method='POST')
+    div(class='form-group')
+      textarea(class='form-control', rows='3', autofocus='', placeholder='Write something...', onchange='{this.handleChange}', name='text')
+    button(type='submit', class='btn btn-primary mb-2') Create Post-it
+  a(href='/logout') Log Out
+  div(class='post-it my-3')
+    div(class='row')
+      each postit in postits
+        div(class='col-sm-12 col-md-6')
+          div(class='alert alert-warning')
+            form(action='/home', method='POST')
+              button(type='submit', name='postit', value=postit.id)
+                i(class='far fa-trash-alt')
+              input(type='hidden', name='action', value='delete')
+            form(action='/home', method='POST')
+              button(type='button', name='postit', value=postit.id, onclick='edit(event)')
+                i(class='far fa-edit')
+              p= postit.text
+              input(type='hidden', name='action', value='update')
+
+block scripts
+  script(src='/js/scripts.js')

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  form.form-signin(action='/signup', method='POST')
+    input.form-control(type='text', name='name', placeholder='Name')
+    input.form-control(type='text', name='surname', placeholder='Surname')
+    input.form-control(type='text', name='username', placeholder='Username')
+    input.form-control(type='password', name='password', placeholder='Password')
+    button.btn.btn-lg.btn-primary.btn-block(type='submit') Sign Up
+  p.my-3.text-center Already have an account? 
+    a(href='/login') Log In
+  if error
+    p(class='error') #{error}

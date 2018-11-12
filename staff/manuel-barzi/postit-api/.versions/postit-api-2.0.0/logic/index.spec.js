@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const mongoose = require('mongoose')
+const { MongoClient } = require('mongodb')
 const { User, Postit } = require('../data')
 const logic = require('.')
 const { AlreadyExistsError } = require('../errors')
@@ -14,9 +14,22 @@ const { env: { MONGO_URL } } = process
 // debug -> $ mocha debug src/logic.spec.js --timeout 10000
 
 describe('logic', () => {
-    before(() => mongoose.connect(MONGO_URL, { useNewUrlParser: true }))
+    let client, users
 
-    // beforeEach(() => User.deleteMany())
+    before(() => {
+        client = new MongoClient(MONGO_URL, { useNewUrlParser: true })
+
+        return client.connect()
+            .then(() => {
+                const db = client.db('postit-test')
+
+                users = db.collection('users')
+
+                User._collection = users
+            })
+    })
+
+    beforeEach(() => users.deleteMany())
 
     describe('user', () => {
         describe('register', () => {
@@ -31,7 +44,7 @@ describe('logic', () => {
 
             it('should succeed on correct data', () =>
                 logic.registerUser(name, surname, username, password)
-                    .then(() => User.find())
+                    .then(() => users.find().toArray())
                     .then(_users => {
                         expect(_users.length).to.equal(1)
 
@@ -372,5 +385,5 @@ describe('logic', () => {
         })
     })
 
-    after(() => mongoose.disconnect())
+    after(() => client.close())
 })
