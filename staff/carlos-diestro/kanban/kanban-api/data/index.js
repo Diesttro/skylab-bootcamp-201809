@@ -1,7 +1,8 @@
-const User = require('./user')
-const Postit = require('./postit')
+const mongoose = require('mongoose')
+
+const { Postit, User } = require('./schemas')
 
 module.exports = {
-    User,
-    Postit
+    Postit: mongoose.model('Postit', Postit),
+    User: mongoose.model('User', User)
 }

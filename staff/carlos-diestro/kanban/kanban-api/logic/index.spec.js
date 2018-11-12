@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { MongoClient } = require('mongodb')
+const mongoose = require('mongoose')
 const { User, Postit } = require('../data')
 const logic = require('.')
 const { AlreadyExistsError } = require('../errors')
@@ -14,22 +14,9 @@ const { env: { MONGO_URL } } = process
 // debug -> $ mocha debug src/logic.spec.js --timeout 10000
 
 describe('logic', () => {
-    let client, users
+    before(() => mongoose.connect(MONGO_URL, { useNewUrlParser: true }))
 
-    before(() => {
-        client = new MongoClient(MONGO_URL, { useNewUrlParser: true })
-
-        return client.connect()
-            .then(() => {
-                const db = client.db('postit-test')
-
-                users = db.collection('users')
-
-                User._collection = users
-            })
-    })
-
-    beforeEach(() => users.deleteMany())
+    beforeEach(() => User.deleteMany())
 
     describe('user', () => {
         describe('register', () => {
@@ -44,7 +31,7 @@ describe('logic', () => {
 
             it('should succeed on correct data', () =>
                 logic.registerUser(name, surname, username, password)
-                    .then(() => users.find().toArray())
+                    .then(() => User.find())
                     .then(_users => {
                         expect(_users.length).to.equal(1)
 
@@ -71,7 +58,7 @@ describe('logic', () => {
             beforeEach(() => {
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
 
-                return users.insertOne(user)
+                return User.create(user)
             })
 
             it('should authenticate on correct credentials', () => {
@@ -79,14 +66,15 @@ describe('logic', () => {
 
                 return logic.authenticateUser(username, password)
                     .then(id => {
+                        id = id.toString()
                         expect(id).to.exist
                         expect(id).to.be.a('string')
 
-                        return users.find().toArray()
+                        return User.find()
                             .then(_users => {
                                 const [_user] = _users
 
-                                expect(_user.id).to.equal(id)
+                                expect(_user._id.toString()).to.equal(id)
                             })
                     })
             })
@@ -102,15 +90,17 @@ describe('logic', () => {
             let user, postit
 
             beforeEach(() => {
-                postit = new Postit('hello text')
+                postit = new Postit({ text: 'hello text' })
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', postits: [postit] })
 
-                return users.insertOne(user)
+                return User.create(user)
             })
 
-            it('should succeed on valid id', () =>
+            it('should succeed on valid id', () => {
+                debugger
                 logic.retrieveUser(user.id)
                     .then(_user => {
+                        
                         expect(_user).not.to.be.instanceof(User)
 
                         const { id, name, surname, username, password, postits } = _user
@@ -123,6 +113,7 @@ describe('logic', () => {
                         expect(password).to.be.undefined
                         expect(postits).not.to.exist
                     })
+                }
             )
         })
 
@@ -385,5 +376,5 @@ describe('logic', () => {
         })
     })
 
-    after(() => client.close())
+    after(() => mongoose.disconnect())
 })

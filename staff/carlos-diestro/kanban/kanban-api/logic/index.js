@@ -13,7 +13,7 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
-        return User.findByUsername(username)
+        return User.findOne({ username })
             .then(user => {
                 if (user) throw new AlreadyExistsError(`username ${username} already registered`)
 
@@ -30,11 +30,11 @@ const logic = {
         if (!username.trim()) throw new ValueError('username is empty or blank')
         if (!password.trim()) throw new ValueError('password is empty or blank')
 
-        return User.findByUsername(username)
+        return User.findOne({ username })
             .then(user => {
                 if (!user || user.password !== password) throw new AuthError('invalid username or password')
-
-                return user.id
+                
+                return user._id
             })
     },
 
@@ -46,7 +46,7 @@ const logic = {
         return User.findById(id)
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
-
+                
                 const _user = user.toObject()
 
                 _user.id = id
@@ -73,7 +73,7 @@ const logic = {
         if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
         if (!password.trim().length) throw new ValueError('password is empty or blank')
 
-        return User.findById(id)
+        return User.findById({ id })
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -121,7 +121,7 @@ const logic = {
 
         if (!text.trim().length) throw new ValueError('text is empty or blank')
 
-        return User.findById(id)
+        return User.findById({ id })
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -138,7 +138,7 @@ const logic = {
 
         if (!id.trim().length) throw new ValueError('id is empty or blank')
 
-        return User.findById(id)
+        return User.findById({ id })
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -166,7 +166,7 @@ const logic = {
 
         if (!postitId.trim().length) throw new ValueError('postit id is empty or blank')
 
-        return User.findById(id)
+        return User.findById({ id })
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -209,7 +209,7 @@ const logic = {
 
         if (!status.trim().length) throw new ValueError('status is empty or blank')
 
-        return User.findById(id)
+        return User.findById({ id })
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
