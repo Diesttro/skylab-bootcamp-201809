@@ -1,7 +1,3 @@
-html, body {
-    height: 100%;
-}
-
 .status {
     min-width: 250px;
 }
@@ -25,4 +21,8 @@ html, body {
 
 .error {
     color: red;
+}
+
+.dashed {
+    border: 3px dashed blue;
 }
