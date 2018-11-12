@@ -102,7 +102,7 @@ describe('logic', () => {
             let user, postit
 
             beforeEach(() => {
-                postit = new Postit('hello text')
+                postit = new Postit({ text: 'hello text' })
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', postits: [postit] })
 
                 return users.insertOne(user)

@@ -133,11 +133,12 @@ const logic = {
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-                const postit = new Postit({ text, user: user.id })
+                const postit = new Postit({ text })
 
-                return postit.save()
+                user.postits.push(postit)
+
+                return user.save()
             })
-            .then(() => undefined)
     },
 
     listPostits(id) {
@@ -150,19 +151,14 @@ const logic = {
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-                debugger
+                // return user.postits.map(({ _id, text }) => { id: _id.toString(), text })
+                return user.postits.map(postit => {
+                    postit.id = postit._id.toString()
 
-                return Postit.find({ user: user._id })
-                    .lean()
-                    .then(postits => postits.map(postit => {
-                        postit.id = postit._id.toString()
-                        
-                        delete postit._id
+                    delete postit._id
 
-                        postit.user = postit.user.toString()
-
-                        return postit
-                    }))
+                    return postit
+                })
             })
     },
 
