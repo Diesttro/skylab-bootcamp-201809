@@ -41,6 +41,8 @@ class Postits extends Component {
 
     allowDrop = ev => {
         ev.preventDefault()
+
+        ev.currentTarget.classList.add('dashed')
     }
 
     dragEnter = ev => {
@@ -92,25 +94,25 @@ class Postits extends Component {
             <section className="status mx-3 my-3">
                 <h3>TODO</h3>
                 <div className="h-100 drop" onDrop={event => this.drop(event, 'TODO')} onDragOver={this.allowDrop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}>
-                {this.state.postits.filter(postit => postit.status === 'TODO').map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
+                {this.state.postits.filter(postit => postit.status === 'TODO').sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime()).map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
                 </div>
             </section>
             <section className="status mx-3 my-3">
                 <h3>DOING</h3>
                 <div className="h-100 drop" onDrop={event => this.drop(event, 'DOING')} onDragOver={this.allowDrop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}>
-                {this.state.postits.filter(postit => postit.status === 'DOING').map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
+                {this.state.postits.filter(postit => postit.status === 'DOING').sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime()).map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
                 </div>
             </section>
             <section className="status mx-3 my-3">
                 <h3>REVIEW</h3>
                 <div className="h-100 drop" onDrop={event => this.drop(event, 'REVIEW')} onDragOver={this.allowDrop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}>
-                {this.state.postits.filter(postit => postit.status === 'REVIEW').map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
+                {this.state.postits.filter(postit => postit.status === 'REVIEW').sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime()).map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
                 </div>
             </section>
             <section className="status mx-3 my-3">
                 <h3>DONE</h3>
                 <div className="h-100 drop" onDrop={event => this.drop(event, 'DONE')} onDragOver={this.allowDrop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}>
-                {this.state.postits.filter(postit => postit.status === 'DONE').map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
+                {this.state.postits.filter(postit => postit.status === 'DONE').sort((a, b) => new Date(a.modified).getTime() - new Date(b.modified).getTime()).map(postit => <Post key={postit.id} text={postit.text} id={postit.id} status={postit.status} onDeletePost={this.handleRemovePostit} onUpdatePost={this.handleModifyPostit} onDrag={event => this.drag(event, postit.id, postit.text, postit.status)} />)}
                 </div>
             </section>
             </div>
