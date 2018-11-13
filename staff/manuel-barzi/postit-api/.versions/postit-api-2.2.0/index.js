@@ -9,7 +9,7 @@ const { User } = require('./data')
 
 const { env: { PORT, MONGO_URL } } = process
 
-mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect(MONGO_URL, { useNewUrlParser: true })
     .then(() => {
         console.log(`db server running at ${MONGO_URL}`)
 

@@ -12,7 +12,7 @@ const MONGO_URL = 'mongodb://localhost:27017/postit-test'
 // debug -> $ mocha debug src/logic.spec.js --timeout 10000
 
 describe('logic', () => {
-    before(() => mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true }))
+    before(() => mongoose.connect(MONGO_URL, { useNewUrlParser: true }))
 
     beforeEach(() => Promise.all([User.deleteMany(), Postit.deleteMany()]))
 
@@ -27,23 +27,22 @@ describe('logic', () => {
                 password = `password-${Math.random()}`
             })
 
-            it('should succeed on correct data', async () => {
-                const res = await logic.registerUser(name, surname, username, password)
+            it('should succeed on correct data', () =>
+                logic.registerUser(name, surname, username, password)
+                    .then(res => expect(res).to.be.undefined)
+                    .then(() => User.find())
+                    .then(_users => {
+                        expect(_users.length).to.equal(1)
 
-                expect(res).to.be.undefined
+                        const [user] = _users
 
-                const _users = await User.find()
-
-                expect(_users.length).to.equal(1)
-
-                const [user] = _users
-
-                expect(user.id).to.be.a('string')
-                expect(user.name).to.equal(name)
-                expect(user.surname).to.equal(surname)
-                expect(user.username).to.equal(username)
-                expect(user.password).to.equal(password)
-            })
+                        expect(user.id).to.be.a('string')
+                        expect(user.name).to.equal(name)
+                        expect(user.surname).to.equal(surname)
+                        expect(user.username).to.equal(username)
+                        expect(user.password).to.equal(password)
+                    })
+            )
 
             it('should fail on undefined name', () => {
                 expect(() => logic.registerUser(undefined, surname, username, password)).to.throw(TypeError, 'undefined is not a string')
