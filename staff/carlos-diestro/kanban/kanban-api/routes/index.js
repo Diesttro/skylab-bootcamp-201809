@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const bearerTokenParser = require('../utils/bearer-token-parser')
 const jwtVerifier = require('./jwt-verifier')
 const routeHandler = require('./route-handler')
+const fs = require('fs')
 
 const jsonBodyParser = bodyParser.json()
 
@@ -186,11 +187,21 @@ router.post('/users/:uid/postits/:pid/collab', [bearerTokenParser, jwtVerifier, 
 })
 
 router.post('/users/:uid/image', [bearerTokenParser, jwtVerifier, upload], (req, res) => {
-    const { sub, params: { uid }, file: { path } } = req
+    const { sub, params: { uid }, file: { mimetype, path } } = req
 
     if (uid !== sub) throw Error('token sub does not match user id')
 
-    res.sendFile(path)
+    // res.sendFile(path)
+
+    const bitmap = fs.readFileSync(path)
+    
+    const buffer = new Buffer(bitmap).toString('base64')
+
+    const image = `data:${mimetype};base64,${buffer}`
+        
+    res.json({
+        data: image
+    })
 })
 
 module.exports = router

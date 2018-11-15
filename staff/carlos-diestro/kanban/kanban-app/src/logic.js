@@ -242,7 +242,8 @@ const logic = {
             },
             body: avatar
         })
-            .then(res => res.blob())
+            .then(res => res.json())
+            .then(res => res.data)
     },
 }
 

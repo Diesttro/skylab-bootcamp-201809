@@ -77,26 +77,33 @@ class Postits extends Component {
     }
 
     handleUpload = event => {
-        logic.addImage(event.target.files[0]).then(blob => {
-            return this.read(blob)
-        }).then(img => {
-            debugger
-            this.setState({ img })
+        logic.addImage(event.target.files[0])
+        .then(image => {
+            this.setState({ image })
         })
     }
 
-    read = (blob) => {
-        return new Promise((res, rej) => {
-            const reader = new FileReader()
+    // handleUpload = event => {
+    //     logic.addImage(event.target.files[0]).then(blob => {
+    //         return this.read(blob)
+    //     }).then(img => {
+    //         debugger
+    //         this.setState({ img })
+    //     })
+    // }
+
+    // read = (blob) => {
+    //     return new Promise((res, rej) => {
+    //         const reader = new FileReader()
         
-            reader.onload = function() {
-                debugger
-                res(reader.result)
-            }
+    //         reader.onload = function() {
+    //             debugger
+    //             res(reader.result)
+    //         }
             
-            reader.readAsDataURL(blob)
-        })
-    }
+    //         reader.readAsDataURL(blob)
+    //     })
+    // }
 
     // TODO error handling!
 
@@ -111,7 +118,7 @@ class Postits extends Component {
             <form enctype="multipart/form-data" onSubmit={this.handleUpload}>
                 <input type="file" name="avatar" onChange={this.handleUpload} />
             </form>
-            {this.state.img && <img src={this.state.img} />}
+            {this.state.image && <img src={this.state.image} />}
             </div>
             </div>
             <div className="container">
