@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import logic from '../logic'
 
 class Post extends Component {
     state = { text: this.props.text, status: this.props.status }
@@ -18,6 +19,12 @@ class Post extends Component {
         this.setState({ text, status })
     }
 
+    handleCollabChange = event => {
+        const name = event.target.value
+        debugger
+        logic.addCollaborator(this.props.id, name).then(res => {debugger})
+    }
+
     handleBlur = () => {
         this.props.onUpdatePost(this.props.id, this.state.text, this.state.status)
     }
@@ -32,6 +39,10 @@ class Post extends Component {
             </select>
             <textarea className="w-100" defaultValue={this.state.text} onChange={this.handleChange} onBlur={this.handleBlur} data-status={this.props.status} />
             <button onClick={() => this.props.onDeletePost(this.props.id)}><i className="far fa-trash-alt"></i></button>
+            <select className="form-control" onChange={this.handleCollabChange}>
+                <option>Collaborators</option>
+                {this.props.friends.map(friend => <option value={friend}>{friend}</option>)}
+            </select>
         </article>
     }
 }

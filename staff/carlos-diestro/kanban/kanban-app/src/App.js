@@ -10,7 +10,18 @@ import { Route, withRouter, Redirect } from 'react-router-dom'
 logic.url = 'http://localhost:5000/api'
 
 class App extends Component {
-    state = { error: null }
+    state = {
+        friends: [],
+        error: null
+    }
+
+    componentDidMount() {
+        if (logic._userId) {
+            logic.retrieveUser()
+                .then(user => { this.setState({ friends: user.friends }) })
+        }
+        // TODO error handling!
+    }
 
     handleRegisterClick = () => this.props.history.push('/register')
 
@@ -46,6 +57,34 @@ class App extends Component {
 
     handleGoBack = () => this.props.history.push('/')
 
+    handleAddFriend = event => {
+        event.preventDefault()
+
+        const username = event.target[0].value
+        
+        try {
+            logic.addFriend(username)
+                .then(res => logic.retrieveUser().then(user => { this.setState({ friends: user.friends }) }))
+                .catch(err => console.log(err))
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
+    handleRemoveFriend = event => {
+        event.preventDefault()
+
+        const username = event.target[0].value
+        
+        try {
+            logic.removeFriend(username)
+                .then(res => logic.retrieveUser().then(user => { this.setState({ friends: user.friends }) }))
+                .catch(err => console.log(err))
+        } catch(err) {
+            console.log(err)
+        }
+    }
+
     render() {
         const { error } = this.state
 
@@ -56,8 +95,18 @@ class App extends Component {
             {error && <Error message={error} />}
 
             <Route path="/postits" render={() => logic.loggedIn ? <div>
-                <section><button onClick={this.handleLogoutClick}>Logout</button></section>
-                <Postits />
+                <section>
+                    <button type="button" onClick={this.handleLogoutClick} style={{ float: "left" }}>Logout</button>
+                    <form onSubmit={this.handleAddFriend} style={{ textAlign: "right" }}>
+                        <input type="text" name="friend" placeholder="Write username to add" />
+                        <button type="submit">Add Friend</button>
+                    </form>
+                    <form onSubmit={this.handleRemoveFriend} style={{ textAlign: "right" }}>
+                        <input type="text" name="friend" placeholder="Write username to remove" />
+                        <button type="submit">Remove Friend</button>
+                    </form>
+                </section>
+                <Postits friends={this.state.friends} />
             </div> : <Redirect to="/" />} />
 
         </div>

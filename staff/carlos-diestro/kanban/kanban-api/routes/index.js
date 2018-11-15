@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const multer  = require('multer')
 const logic = require('../logic')
 const jwt = require('jsonwebtoken')
 const bearerTokenParser = require('../utils/bearer-token-parser')
@@ -7,6 +8,19 @@ const jwtVerifier = require('./jwt-verifier')
 const routeHandler = require('./route-handler')
 
 const jsonBodyParser = bodyParser.json()
+
+const imgDir = __dirname.replace('routes', 'uploads')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, imgDir)
+    },
+    filename: function (req, file, cb) {
+        cb(null, req.params.uid + '.' + file.originalname.split('.').pop())
+    }
+})
+
+const upload = multer({ storage: storage }).single('avatar')
 
 const router = express.Router()
 
@@ -127,6 +141,56 @@ router.delete('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, j
             }))
     }, res)
 
+})
+
+router.post('/users/:id/friends', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id }, body: { name } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.addFriend(id, name)
+            .then(() => res.json({
+                message: 'friend added'
+            }))
+
+    }, res)
+})
+
+router.delete('/users/:id/friends', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id }, body: { name } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.removeFriend(id, name)
+            .then(() => res.json({
+                message: 'friend removed'
+            }))
+
+    }, res)
+})
+
+router.post('/users/:uid/postits/:pid/collab', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { uid, pid }, body: { name } } = req
+
+        if (uid !== sub) throw Error('token sub does not match user id')
+
+        return logic.addCollaborator(uid, pid, name)
+            .then(() => res.json({
+                message: 'collaborator added'
+            }))
+
+    }, res)
+})
+
+router.post('/users/:uid/image', [bearerTokenParser, jwtVerifier, upload], (req, res) => {
+    const { sub, params: { uid }, file: { path } } = req
+
+    if (uid !== sub) throw Error('token sub does not match user id')
+
+    res.sendFile(path)
 })
 
 module.exports = router

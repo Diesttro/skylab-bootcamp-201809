@@ -17,6 +17,7 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.3.11",
+    "multer": "^1.4.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

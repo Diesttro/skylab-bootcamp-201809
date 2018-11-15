@@ -69,6 +69,21 @@ const logic = {
         sessionStorage.removeItem('token')
     },
 
+    retrieveUser() {
+        return fetch(`${this.url}/users/${this._userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                
+                return res.data
+            })
+    },
+
     addPostit(text) {
         if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
 
@@ -145,7 +160,90 @@ const logic = {
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
-    }
+    },
+
+    addFriend(name) {
+        if (typeof name !== 'string') throw new TypeError(`${name} is not a string`)
+
+        if (!name.trim().length) throw Error('id is empty or blank')
+
+        return fetch(`${this.url}/users/${this._userId}/friends`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ name })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+
+                return res
+            })
+    },
+
+    removeFriend(name) {
+        if (typeof name !== 'string') throw new TypeError(`${name} is not a string`)
+
+        if (!name.trim().length) throw Error('id is empty or blank')
+
+        return fetch(`${this.url}/users/${this._userId}/friends`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ name })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+
+                return res
+            })
+    },
+
+    addCollaborator(pid, name) {
+        if (typeof name !== 'string') throw new TypeError(`${name} is not a string`)
+
+        if (!name.trim().length) throw Error('id is empty or blank')
+
+        return fetch(`${this.url}/users/${this._userId}/postits/${pid}/collab`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ name })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+
+                return res
+            })
+    },
+
+    addImage(file) {
+        // if (typeof name !== 'string') throw new TypeError(`${name} is not a string`)
+
+        // if (!name.trim().length) throw Error('id is empty or blank')
+
+        let avatar = new FormData()
+
+        avatar.append('avatar', file)
+
+        return fetch(`${this.url}/users/${this._userId}/image`, {
+            method: 'POST',
+            headers: {
+                // 'Content-Type': 'multipart/form-data;boundary="boundary"',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: avatar
+        })
+            .then(res => res.blob())
+    },
 }
 
 // export default logic

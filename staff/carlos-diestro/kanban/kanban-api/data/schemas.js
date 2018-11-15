@@ -17,7 +17,11 @@ const Postit = new Schema({
         type: ObjectId,
         ref: 'User',
         required: true
-    }
+    },
+    collaborators: [{
+        type: ObjectId,
+        ref: 'User'
+    }]
 })
 
 const User = new Schema({
@@ -34,6 +38,10 @@ const User = new Schema({
         required: true,
         unique: true
     },
+    friends: [{
+        type: ObjectId,
+        ref: 'User'
+    }],
     password: {
         type: String,
         required: true
