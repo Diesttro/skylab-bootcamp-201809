@@ -1,0 +1,400 @@
+{
+	"info": {
+		"_postman_id": "8389c0ce-c85e-41b7-8c7a-eb9f44502dba",
+		"name": "Kanban API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"pepito\",\n\t\"password\": \"123\",\n\t\"name\": \"manuel\",\n\t\"surname\": \"barzi\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"mb\",\n\t\"password\": \"123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjZmM3NDI4NC1jYTUwLTRlZjEtYjhiMC0yZjUyNjc0NzE3YzUiLCJpYXQiOjE1NDE2ODE4MTB9.n6oAI3GmGx8NKX8SwTgJ6gb1MNPaX1j13LGO3wHMsuo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/cfc74284-ca50-4ef1-b8b0-2f52674717c5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"cfc74284-ca50-4ef1-b8b0-2f52674717c5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"my post-it 2\" }"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List postits",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"text\": \"my new post-it 3\" }"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits/f0ae412f-1278-455a-b229-9fc35cd3350a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits",
+						"f0ae412f-1278-455a-b229-9fc35cd3350a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove postit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlNWYwNzg1NS1mY2ZmLTQxNDEtOWIzZC0zOTRkOGQ0ZjkyODYiLCJpYXQiOjE1NDE1MTc5ODR9.Kq8bjB5MDRoEmVzVDlLc1zS_Krom_HGiJpoIqDJRcG4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/e5f07855-fcff-4141-9b3d-394d8d4f9286/postits/0f28ca62-cc5c-4fd9-8191-e1879678ae0d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"e5f07855-fcff-4141-9b3d-394d8d4f9286",
+						"postits",
+						"0f28ca62-cc5c-4fd9-8191-e1879678ae0d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0NzU0MTUzZi03ZDJmLTQ0MmQtYmYyYS05YjEwMDY4ZjVkZDIiLCJpYXQiOjE1NDE2ODMwODV9.MkP1xCJOB4ET-QsIP5Dj5n8AOsP8qiyA1WTvX6gyNjs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"pepito\",\n\t\"password\": \"123\",\n\t\"newPassword\": \"123\",\n\t\"name\": \"manuel\",\n\t\"surname\": \"barzi\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/4754153f-7d2f-442d-bf2a-9b10068f5dd2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"4754153f-7d2f-442d-bf2a-9b10068f5dd2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve photo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YmVlZDc0NjNhNzFmMDJhYmYyNTM4ZjciLCJpYXQiOjE1NDIzNzkzNDZ9.wWZlnU5Riq3pXU_iDOhfe7kDwMeuAlJJFvdEUPpiqAQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/5beed7463a71f02abf2538f7/photo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"5beed7463a71f02abf2538f7",
+						"photo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save photo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YmVlZDc0NjNhNzFmMDJhYmYyNTM4ZjciLCJpYXQiOjE1NDIzNzkzNDZ9.wWZlnU5Riq3pXU_iDOhfe7kDwMeuAlJJFvdEUPpiqAQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "pepito",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/5beed7463a71f02abf2538f7/photo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"5beed7463a71f02abf2538f7",
+						"photo"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

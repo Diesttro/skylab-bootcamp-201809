@@ -1,0 +1,9 @@
+#.env
+
+data/users/**/*.png
+data/users/**/*.jpg
+data/users/**/*.jpeg
+data/users/**/*.gif
+data/users/**/*.bmp
+data/users/**/*.svg
+!data/users/default/profile.png
