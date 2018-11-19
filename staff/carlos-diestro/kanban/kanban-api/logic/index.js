@@ -1,5 +1,6 @@
 const { User, Postit } = require('../data')
 const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+const fs = require('fs')
 
 const logic = {
     registerUser(name, surname, username, password) {
@@ -51,6 +52,16 @@ const logic = {
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             user.id = id
+
+            if (user.avatar) {
+                const bitmap = fs.readFileSync(user.avatar)
+    
+                const buffer = new Buffer(bitmap).toString('base64')
+
+                const image = `data:image/${user.avatar.split('.').pop()};base64,${buffer}`
+
+                user.avatar = image
+            }
 
             await Promise.all(user.friends.map(async (id, index) => {
                 var friend = await User.findById({ _id: id }).lean()
@@ -292,6 +303,14 @@ const logic = {
                     .then(result => result)
             }
         })
+    },
+
+    addUserImage(uid, path) {
+        debugger
+
+        return (async () => {
+            return await User.updateOne({ _id: uid }, { avatar: path })
+        })()
     }
 }
 

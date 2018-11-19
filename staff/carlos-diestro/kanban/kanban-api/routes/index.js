@@ -193,15 +193,15 @@ router.post('/users/:uid/image', [bearerTokenParser, jwtVerifier, upload], (req,
 
     // res.sendFile(path)
 
-    const bitmap = fs.readFileSync(path)
-    
-    const buffer = new Buffer(bitmap).toString('base64')
+    const buffer = fs.readFileSync(path).toString('base64')
 
     const image = `data:${mimetype};base64,${buffer}`
-        
-    res.json({
-        data: image
-    })
+    
+    return logic.addUserImage(uid, path)
+        .then(() => 
+            res.json({
+                data: image
+            }))
 })
 
 module.exports = router

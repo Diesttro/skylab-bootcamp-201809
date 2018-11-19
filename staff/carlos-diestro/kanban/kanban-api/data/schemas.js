@@ -40,11 +40,15 @@ const User = new Schema({
     },
     friends: [{
         type: ObjectId,
-        ref: 'User'
+        ref: 'User',
+        unique: true
     }],
     password: {
         type: String,
         required: true
+    },
+    avatar: {
+        type: String
     }
 })
 

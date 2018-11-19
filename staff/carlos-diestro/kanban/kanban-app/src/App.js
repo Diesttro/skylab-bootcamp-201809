@@ -12,13 +12,26 @@ logic.url = 'http://localhost:5000/api'
 class App extends Component {
     state = {
         friends: [],
+        load: false,
         error: null
     }
 
-    componentDidMount() {
+    componentDidMount(prevProps) {
         if (logic._userId) {
             logic.retrieveUser()
-                .then(user => { this.setState({ friends: user.friends }) })
+                .then(user => { 
+                    this.setState({ friends: user.friends, load: true, avatar: user.avatar })
+                })
+        }
+        // TODO error handling!
+    }
+
+    componentDidUpdate(prevProps) {
+        if (logic._userId && !this.state.load) {
+            logic.retrieveUser()
+                .then(user => { 
+                    this.setState({ friends: user.friends, load: true, avatar: user.avatar })
+                })
         }
         // TODO error handling!
     }
@@ -51,7 +64,7 @@ class App extends Component {
 
     handleLogoutClick = () => {
         logic.logout()
-
+        this.setState({ load: false })
         this.props.history.push('/')
     }
 
@@ -106,7 +119,7 @@ class App extends Component {
                         <button type="submit">Remove Friend</button>
                     </form>
                 </section>
-                <Postits friends={this.state.friends} />
+                <Postits friends={this.state.friends} avatar={this.state.avatar} />
             </div> : <Redirect to="/" />} />
 
         </div>

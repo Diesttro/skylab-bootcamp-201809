@@ -70,6 +70,7 @@ const logic = {
     },
 
     retrieveUser() {
+        debugger
         return fetch(`${this.url}/users/${this._userId}`, {
             method: 'GET',
             headers: {
@@ -78,6 +79,7 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
+                debugger
                 if (res.error) throw Error(res.error)
                 
                 return res.data

@@ -13,6 +13,11 @@ class Postits extends Component {
         // TODO error handling!
     }
 
+    componentWillReceiveProps(prevProps, props) {
+        // debugger
+        this.setState({ avatar: prevProps.avatar })
+    }
+
     handleSubmit = text => {
         try {
             logic.addPostit(text)
@@ -77,9 +82,11 @@ class Postits extends Component {
     }
 
     handleUpload = event => {
+        debugger
         logic.addImage(event.target.files[0])
         .then(image => {
-            this.setState({ image })
+            debugger
+            this.setState({ avatar: image })
         })
     }
 
@@ -118,7 +125,7 @@ class Postits extends Component {
             <form enctype="multipart/form-data" onSubmit={this.handleUpload}>
                 <input type="file" name="avatar" onChange={this.handleUpload} />
             </form>
-            {this.state.image && <img src={this.state.image} />}
+            {this.state.avatar && <img src={this.state.avatar} />}
             </div>
             </div>
             <div className="container">
