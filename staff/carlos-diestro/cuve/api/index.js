@@ -5,7 +5,7 @@ const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')
 
-const { env: { PORT, MONGODB } } = process
+const { env: { PORT, MONGO_URL } } = process
 
 mongoose.connect(MONGO_URL, { useCreateIndex: true, useNewUrlParser: true })
   .then(() => {

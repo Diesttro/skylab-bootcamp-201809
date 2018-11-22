@@ -2,6 +2,7 @@ const { User, Thread, Chat } = require('../data')
 
 const logic = {
   register(fullname, username, email, password) {
+    
     return (async () => {
       const user = await User.findOne({ username }).lean()
 
@@ -15,11 +16,11 @@ const logic = {
 
   authenticate(username, password) {
     return (async () => {
-      const user = await User.findOne({ username }).lean()
+      const user = await User.findOne({ username })
 
-      if (!user || user.password !== password) throw Error('username or password are not valid')
+      if (!user || user.password !== password) throw Error('username or password not valid')
 
-      return user._id.toString()
+      return user.id
     })()
   },
 

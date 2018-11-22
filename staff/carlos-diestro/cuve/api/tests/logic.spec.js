@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const { expect } = require('chai')
-const { User, Thread, Comment, Chat } = require('../data')
+const { User, Thread, Chat } = require('../data')
 const logic = require('../logic')
-const MONGO_URL = 'mongodb://localhost:27017/dev_blocks'
+const MONGO_URL = 'mongodb://localhost:27017/dev_cuve'
 
 describe('logic', () => {
   before(() => mongoose.connect(MONGO_URL, { useCreateIndex: true, useNewUrlParser: true }))
