@@ -1,3 +1,3 @@
-#Blocks
+# Blocks
 
-Final project of the Skylab bootcamp.
+Final project of the Skylab Coders Academy Full-Stack Bootcamp.
