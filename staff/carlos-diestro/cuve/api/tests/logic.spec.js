@@ -153,6 +153,50 @@ describe('logic', () => {
       })
     })
 
+    describe('share', () => {
+      it('should succeed on share a thread', async () => {
+        let thread = await Thread.findOne({ author: user.id })
+  
+        const result = await logic.shareThread(thread.id, user2.id)
+  
+        thread = await Thread.findOne({ author: user.id })
+        
+        expect(thread.shares.length).to.be.equal(1)
+      })
+
+      it('should succeed on unshare a thread', async () => {
+        let thread = await Thread.findOne({ author: user.id })
+
+        const result = await logic.unshareThread(thread.id, user2.id)
+  
+        thread = await Thread.findOne({ author: user.id })
+        
+        expect(thread.shares.length).to.be.equal(0)
+      })
+    })
+
+    describe('like', () => {
+      it('should succeed on like a thread', async () => {
+        let thread = await Thread.findOne({ author: user.id })
+  
+        const result = await logic.likeThread(thread.id, user2.id)
+  
+        thread = await Thread.findOne({ author: user.id })
+        
+        expect(thread.likes.length).to.be.equal(1)
+      })
+
+      it('should succeed on unlike a thread', async () => {
+        let thread = await Thread.findOne({ author: user.id })
+  
+        const result = await logic.unlikeThread(thread.id, user2.id)
+  
+        thread = await Thread.findOne({ author: user.id })
+        
+        expect(thread.likes.length).to.be.equal(0)
+      })
+    })
+
     describe('retrieve thread', () => {
       it('should succeed on correct data', async () => {
         const thread = await Thread.findOne({ author: user.id })

@@ -1,8 +1,15 @@
 const { User, Thread, Chat } = require('../data')
 
 const logic = {
+  /**
+   * Register a user
+   * 
+   * @param {*} fullname 
+   * @param {*} username 
+   * @param {*} email 
+   * @param {*} password 
+   */
   register(fullname, username, email, password) {
-    
     return (async () => {
       const user = await User.findOne({ username }).lean()
 
@@ -14,16 +21,27 @@ const logic = {
     })()
   },
 
+  /**
+   * Authenticate a user
+   * 
+   * @param {*} username 
+   * @param {*} password 
+   */
   authenticate(username, password) {
     return (async () => {
       const user = await User.findOne({ username })
 
-      if (!user || user.password !== password) throw Error('username or password not valid')
+      if (!user || user.password !== password) throw Error('username or password are not valid')
 
       return user.id
     })()
   },
 
+  /**
+   * Retrieve a user
+   * 
+   * @param {*} id 
+   */
   retrieveUser(id) {
     return (async () => {
       const projection = {
@@ -34,13 +52,23 @@ const logic = {
 
       if (!user) throw Error(`username ${username} does not exist`)
 
+      user.id = user._id.toString()
+      delete user._id
+      delete _v
+
       return user
     })()
   },
 
+  /**
+   * Retrieve a user by username depending on his configuration
+   * 
+   * @param {*} id 
+   * @param {*} username 
+   */
   retrieveUserByUsername(id, username) {
     return (async () => {
-      const followerProjecion = {
+      const followerProjection = {
         fullname: true,
         username: true,
         email: true,
@@ -52,27 +80,30 @@ const logic = {
         private: true
       }
 
-      let user = await User.findOne({ username }, followerProjecion).lean()
-
-      if (!user) throw Error(`username ${username} does not exist`)
-
-      if (user.private) {
-        user = await User.findOne({ username, followers: id }, followerProjecion).lean()
-        
-        if (!user) {
-          const notFollowerProjection = {
-            fullname: true,
-            username: true,
-            email: true,
-            avatar: true,
-            description: true,
-            country: true,
-            private: true
-          }
-
-          user = await User.findOne({ username }, notFollowerProjection).lean()
-        }
+      const notFollowerProjection = {
+        fullname: true,
+        username: true,
+        email: true,
+        avatar: true,
+        description: true,
+        country: true,
+        private: true
       }
+
+      let user = await User.findOne({ username }).lean()
+
+      if (!user) throw Error(`user ${username} does not exist`)
+
+      const blocked = user.blocked.find(bid => bid.toString() === id)
+
+      if (blocked) user = await User.findOne({ username }, notFollowerProjection).lean()
+      else if (user.private) user = await User.findOne({ username, followers: id }, followerProjection).lean()
+        if (!user) user = await User.findOne({ username }, notFollowerProjection).lean()
+      else user = await User.findOne({ username }, followerProjection).lean()
+
+      user.id = user._id.toString()
+      delete user._id
+      delete _v
 
       return user
     })()
@@ -94,19 +125,23 @@ const logic = {
 
       let result
 
-      if (user.private) {
-        result = await User.updateOne({ username }, { $push: { pending: id } })
-      } else {
-        result = await User.updateOne({ username }, { $push: { followers: id } })
-      }
+      if (user.private) result = await User.updateOne({ username }, { $push: { pending: id } })
+      else result = await User.updateOne({ username }, { $push: { followers: id } })
 
       return result
     })()
   },
 
-  unfollowUserByUsername(uid, username) {
+  unfollowUserByUsername(id, username) {
     return (async () => {
-      return await User.updateOne({ username }, { $pull: { followers: uid } })
+      let result
+
+      const follower = await User.findOne({ username, followers: id })
+
+      if (!follower) result = await User.updateOne({ username }, { $pull: { pending: id } })
+      else result = await User.updateOne({ username }, { $pull: { followers: id } })
+
+      return result
     })()
   },
 
@@ -120,13 +155,16 @@ const logic = {
 
   removeThread(id, uid) {
     return (async () => {
-      return Thread.deleteOne({ _id: id, author: uid })
+      return await Thread.deleteOne({ _id: id, author: uid })
     })()
   },
 
   retrieveThread(id) {
     return (async () => {
-      let thread =  await Thread.findById(id).lean().populate([{ path: 'author', select: 'fullname username avatar'}, { path: 'comments.author', select: 'fullname username avatar'}]).exec()
+      let thread =  await Thread.findById(id).lean().populate([
+        { path: 'author', select: 'fullname username avatar'},
+        { path: 'comments.author', select: 'fullname username avatar'}
+      ]).exec()
 
       thread.id = thread._id.toString()
       delete thread._id
@@ -148,7 +186,10 @@ const logic = {
 
   retrieveUserThreads(uid) {
     return (async () => {
-      let threads = await Thread.find({ author: uid }).lean().populate([{ path: 'author', select: 'fullname username avatar'}, { path: 'comments.author', select: 'fullname username avatar'}]).exec()
+      let threads = await Thread.find({ author: uid }).lean().populate([
+        { path: 'author', select: 'fullname username avatar'},
+        { path: 'comments.author', select: 'fullname username avatar'}
+      ]).exec()
 
       threads.forEach(thread => {
         thread.id = thread._id.toString()
@@ -162,7 +203,7 @@ const logic = {
           delete comment._id
   
           comment.author.id = comment.author._id.toString()
-          delete comment.author._id //Not working
+          delete comment.author._id
         })
       })
 
@@ -179,6 +220,30 @@ const logic = {
   removeComment(tid, id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: tid }, { $pull: { comments: { _id: id, author: uid } } })
+    })()
+  },
+
+  shareThread(id, uid) {
+    return (async () => {
+      return await Thread.updateOne({ _id: id }, { $push: { shares: uid } })
+    })()
+  },
+
+  unshareThread(id, uid) {
+    return (async () => {
+      return await Thread.updateOne({ _id: id }, { $pull: { shares: uid } })
+    })()
+  },
+
+  likeThread(id, uid) {
+    return (async () => {
+      return await Thread.updateOne({ _id: id }, { $push: { likes: uid } })
+    })()
+  },
+
+  unlikeThread(id, uid) {
+    return (async () => {
+      return await Thread.updateOne({ _id: id }, { $pull: { likes: uid } })
     })()
   }
 }

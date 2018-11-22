@@ -2,8 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const logic = require('../logic')
 const jwt = require('jsonwebtoken')
-// const bearerTokenParser = require('../utils/bearer-token-parser')
-// const jwtVerifier = require('./jwt-verifier')
+const jwtHelper = require('../utils/jwt-helper')
 // const fs = require('fs')
 
 const jsonBodyParser = bodyParser.json()
@@ -49,23 +48,73 @@ router.post('/auth', jsonBodyParser, async (req, res) => {
   }
 })
 
-router.get('/users/:id', jsonBodyParser, async (req, res) => {
+router.get('/users/id/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { id }, sub } = req
 
   try {
-    const id = await logic.authenticate(username, password)
+    if (sub !== id) throw Error('token sub does not match with user id')
 
-    const token = jwt.sign({ sub: id }, JWT_SECRET)
+    const user = await logic.retrieveUser(id)
 
     res.json({
-      data: {
-        id,
-        token
-      },
-      message: 'user authenticated'
+      data: user,
+      message: 'user found'
     })
   } catch (error) {
-    res.status(401).json({
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/username/:username/:id*?', jsonBodyParser, async (req, res) => {
+  const { params: { username, id } } = req
+
+  try {
+    const user = await logic.retrieveUserByUsername(id, username)
+
+    res.json({
+      data: user,
+      message: 'user found'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/follow/:username/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { username, id }, sub } = req
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const result = await logic.followUserByUsername(id, username)
+
+    res.json({
+      message: 'user followed'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/unfollow/:username/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { username, id }, sub } = req
+  
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const result = await logic.unfollowUserByUsername(id, username)
+
+    res.json({
+      message: 'user unfollowed'
+    })
+  } catch (error) {
+    res.status(404).json({
       error: error.message
     })
   }

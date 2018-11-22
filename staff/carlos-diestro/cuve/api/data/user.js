@@ -30,6 +30,10 @@ const User = new Schema({
     type: String,
     required: true
   },
+  shares: [{
+    type: ObjectId,
+    ref: 'Thread'
+  }],
   likes: [{
     type: ObjectId,
     ref: 'Thread'
