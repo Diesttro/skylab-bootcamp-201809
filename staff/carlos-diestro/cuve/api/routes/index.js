@@ -84,7 +84,7 @@ router.get('/users/username/:username/:id*?', jsonBodyParser, async (req, res) =
   }
 })
 
-router.post('/users/follow/:username/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
+router.post('/users/:id/follow/:username', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { username, id }, sub } = req
 
   try {
@@ -102,7 +102,7 @@ router.post('/users/follow/:username/:id', [jwtHelper, jsonBodyParser], async (r
   }
 })
 
-router.post('/users/unfollow/:username/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
+router.post('/users/:id/unfollow/:username', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { username, id }, sub } = req
   
   try {
@@ -115,6 +115,46 @@ router.post('/users/unfollow/:username/:id', [jwtHelper, jsonBodyParser], async 
     })
   } catch (error) {
     res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid }, sub } = req
+
+  const { text } = req.body
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.addThread(uid, text)
+
+    res.json({
+      message: 'thread added'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.delete('/users/:uid/threads/:tid', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  const { text } = req.body
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const result = await logic.removeThread(tid, uid)
+
+    res.json({
+      message: 'thread removed'
+    })
+  } catch (error) {
+    res.status(500).json({
       error: error.message
     })
   }
