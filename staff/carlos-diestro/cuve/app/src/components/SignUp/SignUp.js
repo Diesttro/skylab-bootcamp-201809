@@ -1,12 +1,18 @@
 import React, { Component } from 'react'
 import './SignUp.css'
 import logo from '../../logo.svg'
-import { Container, Row, Col, Form, Input, FormFeedback, Button } from 'reactstrap'
+import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import logic from '../../logic'
 
 class SignUp extends Component {
-  state = {}
+  state = {
+    fullname: '',
+    username: '',
+    email: '',
+    password: '',
+    repassword: ''
+  }
 
   handleChange = event => {
     const input = event.target
@@ -50,23 +56,25 @@ class SignUp extends Component {
 
   render() {
     return (
-      <Container className="my-3">
+      <Container className="my-5">
         <Row>
-          <Col className="mt-2 mb-4">
+          <Col className="mt-5 mb-4">
             <img className="logo mb-3" src={logo} />
           </Col>
         </Row>
         <Form className="signup" onSubmit={this.handleSubmit}>
           <Row form className="justify-content-center">
             <Col className="inputs">
-              <h3 className="mb-3">Sign Up Form</h3>
-              <Input type="text" name="fullname" placeholder="Full name" onChange={this.handleChange} />
-              <Input type="text" name="username" placeholder="Username" onChange={this.handleChange} />
-              <Input type="text" name="email" placeholder="Email" onChange={this.handleChange} />
-              <Input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
-              <Input type="password" name="repassword" placeholder="Repeat password" onChange={this.handleChange} />
-              { this.state.error && <FormFeedback className="d-block">{ this.state.error }</FormFeedback> }
-              <Row className="justify-content-between align-items-center mt-3">
+              <FormGroup className="my-2">
+                <h3 className="mb-3">Sign Up Form</h3>
+                <Input type="text" name="fullname" placeholder="Full name" onChange={this.handleChange} />
+                <Input type="text" name="username" placeholder="Username" onChange={this.handleChange} />
+                <Input type="text" name="email" placeholder="Email" onChange={this.handleChange} />
+                <Input type="password" name="password" placeholder="Password" onChange={this.handleChange} />
+                <Input type="password" name="repassword" placeholder="Repeat password" onChange={this.handleChange} />
+              </FormGroup>
+              { this.state.error && <FormFeedback className="d-block my-1 text-center">{ this.state.error }</FormFeedback> }
+              <Row className="justify-content-between align-items-center my-2">
                 <Col>
                   <Link to="/">Back</Link>
                 </Col>
