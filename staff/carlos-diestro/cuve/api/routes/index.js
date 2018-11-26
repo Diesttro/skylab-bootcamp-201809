@@ -13,6 +13,8 @@ const { env: { JWT_SECRET } } = process
 router.post('/register', jsonBodyParser, async (req, res) => {
   const { fullname, username, email, password } = req.body
 
+  debugger
+
   try {
     await logic.register(fullname, username, email, password)
 
@@ -143,8 +145,6 @@ router.post('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res)
 router.delete('/users/:uid/threads/:tid', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { uid, tid }, sub } = req
 
-  const { text } = req.body
-
   try {
     if (sub !== id) throw Error('token sub does not match with user id')
 
@@ -152,6 +152,116 @@ router.delete('/users/:uid/threads/:tid', [jwtHelper, jsonBodyParser], async (re
 
     res.json({
       message: 'thread removed'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:uid/threads/:tid/comments', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  const { text } = req.body
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.addComment(tid, uid, text)
+
+    res.json({
+      message: 'comment added'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.delete('/users/:uid/threads/:tid/comments/:cid', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid, cid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.removeComment(tid, cid, uid)
+
+    res.json({
+      message: 'comment removed'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:uid/threads/:tid/share', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.shareThread(tid, uid)
+
+    res.json({
+      message: 'thread shared'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.delete('/users/:uid/threads/:tid/unshare', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.unshareThread(tid, uid)
+
+    res.json({
+      message: 'thread unshared'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:uid/threads/:tid/like', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.likeThread(tid, uid)
+
+    res.json({
+      message: 'thread liked'
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.delete('/users/:uid/threads/:tid/unlike', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid, tid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const result = await logic.unlikeThread(tid, uid)
+
+    res.json({
+      message: 'thread unliked'
     })
   } catch (error) {
     res.status(500).json({

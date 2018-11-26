@@ -1,0 +1,17 @@
+.inputs {
+  max-width: 300px;
+}
+
+.inputs input:first-of-type {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.inputs input:last-of-type {
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
+.form-control {
+  border-radius: 0;
+}

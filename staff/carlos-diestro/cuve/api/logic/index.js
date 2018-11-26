@@ -249,3 +249,11 @@ const logic = {
 }
 
 module.exports = logic
+
+function check(v) {
+  return {
+    is: function(e) {
+      return typeof v === e   
+    }
+  }
+}

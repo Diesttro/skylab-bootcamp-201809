@@ -1,0 +1,12 @@
+.logo {
+  max-height: 100px;
+}
+
+.btn {
+  padding: .375rem 1.25rem;
+  border-radius: 2rem;
+}
+
+.landing .btn {
+  max-width: 300px;
+}
