@@ -34,7 +34,7 @@ class SignIn extends Component {
         this.state.password
       )
 
-      this.props.history.push('/')
+      this.props.history.push('/home')
     } catch ({ message }) {
       this.setState({ error: message })
     }

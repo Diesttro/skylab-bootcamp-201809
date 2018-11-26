@@ -6,7 +6,7 @@ function jwtHelper(req, res, next) {
   try {
     const { headers: { authorization } } = req
 
-    const token = authorization.split(' ')[1]
+    const token = authorization ? authorization.split(' ')[1] : null
 
     const { sub } = jwt.verify(token, JWT_SECRET)
 

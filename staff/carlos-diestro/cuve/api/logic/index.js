@@ -48,13 +48,15 @@ const logic = {
         password: false
       }
 
-      const user = await User.findById({ _id: id }, projection).lean()
+      const user = await User.findById({ _id: id }, projection).lean().populate('followers')
 
       if (!user) throw Error(`username ${username} does not exist`)
 
+      debugger
+
       user.id = user._id.toString()
       delete user._id
-      delete _v
+      delete user.__v
 
       return user
     })()
@@ -103,7 +105,7 @@ const logic = {
 
       user.id = user._id.toString()
       delete user._id
-      delete _v
+      delete user.__v
 
       return user
     })()

@@ -1,9 +1,8 @@
 const validate = require('./utils/validate')
 
 const logic = {
-  _userId: sessionStorage.getItem('userId') || null,
-  _token: sessionStorage.getItem('token') || null,
   url: 'http://localhost:8080/api/',
+  _user: JSON.parse(sessionStorage.getItem('user')) || null,
 
   async signUp(fullname, username, email, password, repassword) {
     validate([
@@ -54,13 +53,32 @@ const logic = {
     if (res.error) throw Error(res.error)
 
     const { id, token } = res.data
+    
+    this._user = {
+      id,
+      token
+    }
 
-    this._userId = id
-    this._token = token
+    sessionStorage.setItem('user', JSON.stringify(this._user))
+  },
 
-    sessionStorage.setItem('userId', id)
-    sessionStorage.setItem('token', token)
-  }
+  async getUserData() {
+    const endpoint = 'users/id/' + this._user.id
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+    debugger
+    return res.data
+  },
 }
 
 export default logic
