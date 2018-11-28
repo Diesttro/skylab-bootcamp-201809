@@ -4,3 +4,9 @@ body {
   color: #212121;
   background-color: #F5F7FA;
 }
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1030px;
+  }
+}

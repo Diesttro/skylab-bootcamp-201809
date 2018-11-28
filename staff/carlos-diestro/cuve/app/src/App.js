@@ -5,6 +5,7 @@ import Landing from './components/Landing/Landing'
 import SignUp from './components/SignUp/SignUp'
 import SignIn from './components/SignIn/SignIn'
 import Home from './components/Home/Home'
+import Profile from './components/Profile/Profile'
 import NotFound from './components/NotFound/NotFound'
 
 class App extends Component {
@@ -18,6 +19,7 @@ class App extends Component {
         <Route path="/home" component={Home} />
         {/* <Route path="/user" component={User} />
         <Route path="/thread" component={Thread} /> */}
+        <Route path="/profile" component={Profile} />
         <Route component={NotFound} />
       </Switch>
     )

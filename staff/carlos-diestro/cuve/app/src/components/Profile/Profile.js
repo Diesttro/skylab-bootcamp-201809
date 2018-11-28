@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './Home.css'
+import './Profile.css'
 import logo from '../../logo.svg'
 import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
@@ -8,25 +8,26 @@ import Sidebar from '../Sidebar/Sidebar'
 import Main from '../Main/Main'
 import logic from '../../logic'
 
-class Home extends Component {
+class Profile extends Component {
   state = { }
 
   componentDidMount = async () => {
     if (!logic._user) return this.props.history.push('/')
 
-    const user = await logic.getUserData()
+    const data = await logic.getUserData()
 
-    this.setState(user)
+    this.setState(data)
   }
 
   render() {
+
     return (
       <div className="wrapper">
         <Navbar />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar path={this.props.location.pathname} />
+              <Sidebar path={this.props.location.pathname} user={this.state.data} />
               <Main path={this.props.location.pathname} />
             </div>
           </div>
@@ -36,4 +37,4 @@ class Home extends Component {
   }
 }
 
-export default Home
+export default Profile

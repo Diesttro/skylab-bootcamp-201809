@@ -122,6 +122,44 @@ router.post('/users/:id/unfollow/:username', [jwtHelper, jsonBodyParser], async 
   }
 })
 
+router.get('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const threads = await logic.retrieveUserThreads(uid)
+
+    res.json({
+      data: threads
+    })
+  } catch (error) {
+    debugger
+    res.status(409).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/:uid/following/threads', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { uid }, sub } = req
+
+  try {
+    if (sub !== uid) throw Error('token sub does not match with user id')
+
+    const threads = await logic.retrieveFollowingUsersThreads(uid)
+
+    res.json({
+      data: threads
+    })
+  } catch (error) {
+    debugger
+    res.status(409).json({
+      error: error.message
+    })
+  }
+})
+
 router.post('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { uid }, sub } = req
 

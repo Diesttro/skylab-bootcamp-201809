@@ -48,7 +48,7 @@ const logic = {
         password: false
       }
 
-      const user = await User.findById({ _id: id }, projection).lean().populate('followers')
+      const user = await User.findById({ _id: id }, projection).lean().populate('followers', 'id fullname username avatar')
 
       if (!user) throw Error(`username ${username} does not exist`)
 
@@ -186,28 +186,68 @@ const logic = {
     })()
   },
 
+  /**
+   * Retrieve user and shared threads
+   * 
+   * @param {*} uid 
+   */
   retrieveUserThreads(uid) {
     return (async () => {
-      let threads = await Thread.find({ author: uid }).lean().populate([
+      let threads = await Thread.find({ $or: [{ author: uid }, { shares: uid }] }).lean().populate([
         { path: 'author', select: 'fullname username avatar'},
         { path: 'comments.author', select: 'fullname username avatar'}
-      ]).exec()
+      ]).sort({ date: 'desc' }).exec()
 
-      threads.forEach(thread => {
-        thread.id = thread._id.toString()
-        delete thread._id
+      debugger
 
-        thread.author.id = thread.author._id.toString()
-        delete thread.author._id
+      // threads.forEach(thread => {
+      //   thread.id = thread._id.toString()
+      //   delete thread._id
 
-        thread.comments.forEach(comment => {
-          comment.id = comment._id.toString()
-          delete comment._id
+      //   thread.author.id = thread.author._id.toString()
+      //   delete thread.author._id
+
+      //   thread.comments.forEach(comment => {
+      //     comment.id = comment._id.toString()
+      //     delete comment._id
   
-          comment.author.id = comment.author._id.toString()
-          delete comment.author._id
-        })
-      })
+      //     comment.author.id = comment.author._id.toString()
+      //     delete comment.author._id
+      //   })
+      // })
+
+      return threads
+    })()
+  },
+
+  retrieveFollowingUsersThreads(uid) {
+    return (async () => {
+      const user = await User.findOne({ _id: uid }, { following: true }).lean()
+
+      debugger
+
+      let threads = await Thread.find({ $or: [{ author: { $in: user.following } }, { shares: { $in: user.following } }] }).lean().populate([
+        { path: 'author', select: 'fullname username avatar'},
+        { path: 'comments.author', select: 'fullname username avatar'}
+      ]).sort({ date: 'desc' }).exec()
+
+      debugger
+
+      // threads.forEach(thread => {
+      //   thread.id = thread._id.toString()
+      //   delete thread._id
+
+      //   thread.author.id = thread.author._id.toString()
+      //   delete thread.author._id
+
+      //   thread.comments.forEach(comment => {
+      //     comment.id = comment._id.toString()
+      //     delete comment._id
+  
+      //     comment.author.id = comment.author._id.toString()
+      //     delete comment.author._id
+      //   })
+      // })
 
       return threads
     })()

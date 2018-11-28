@@ -1,0 +1,9 @@
+.block {
+  padding: 1.25rem;
+  border-radius: 1.4rem;
+  background-color: #FFFFFF;
+}
+
+.block img {
+  border-radius: 2rem;
+}

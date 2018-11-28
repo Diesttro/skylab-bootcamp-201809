@@ -1,0 +1,14 @@
+.block {
+  padding: 1.25rem;
+  border-radius: 1.4rem;
+  background-color: #FFFFFF;
+}
+
+.block img {
+  border-radius: 50%;
+}
+
+.block .avatar {
+  max-width: 80px;
+  max-height: 80px
+}
