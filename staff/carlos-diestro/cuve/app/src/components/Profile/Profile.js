@@ -11,23 +11,26 @@ import logic from '../../logic'
 class Profile extends Component {
   state = { }
 
-  componentDidMount = async () => {
-    if (!logic._user) return this.props.history.push('/')
-
+  componentWillMount = async () => {
     const data = await logic.getUserData()
 
     this.setState(data)
   }
 
-  render() {
+  componentWillReceiveProps = nextProps => {
+    if (this.props.location.pathname !== nextProps.location.pathname) {
+      this.render()
+    }
+  }
 
+  render() {
     return (
       <div className="wrapper">
         <Navbar />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar path={this.props.location.pathname} user={this.state.data} />
+              <Sidebar path={this.props.location.pathname} user={this.state.data} {...this.props} />
               <Main path={this.props.location.pathname} />
             </div>
           </div>

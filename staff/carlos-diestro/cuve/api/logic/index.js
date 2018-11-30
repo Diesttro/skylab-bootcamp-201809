@@ -52,8 +52,6 @@ const logic = {
 
       if (!user) throw Error(`username ${username} does not exist`)
 
-      debugger
-
       user.id = user._id.toString()
       delete user._id
       delete user.__v
@@ -76,9 +74,11 @@ const logic = {
         email: true,
         avatar: true,
         description: true,
+        signed: true,
         country: true,
         following: true,
         followers: true,
+        pending: true,
         private: true
       }
 
@@ -88,20 +88,38 @@ const logic = {
         email: true,
         avatar: true,
         description: true,
+        signed: true,
         country: true,
+        followers: true,
+        pending: true,
         private: true
       }
 
       let user = await User.findOne({ username }).lean()
-
+      
       if (!user) throw Error(`user ${username} does not exist`)
 
       const blocked = user.blocked.find(bid => bid.toString() === id)
 
       if (blocked) user = await User.findOne({ username }, notFollowerProjection).lean()
-      else if (user.private) user = await User.findOne({ username, followers: id }, followerProjection).lean()
-        if (!user) user = await User.findOne({ username }, notFollowerProjection).lean()
-      else user = await User.findOne({ username }, followerProjection).lean()
+      else if (user.private) {
+        user = await User.findOne({ username, followers: id }, followerProjection).lean()
+        
+        if (!user) {
+          user = await User.findOne({ username }, notFollowerProjection).lean()
+        } else {
+          const threads = await this.retrieveUserThreads(user._id.toString())
+
+          user.threads = threads
+        }
+      }
+      else {
+        user = await User.findOne({ username }, followerProjection).lean()
+
+        const threads = await this.retrieveUserThreads(user._id.toString())
+
+        user.threads = threads
+      }
 
       user.id = user._id.toString()
       delete user._id
@@ -121,14 +139,18 @@ const logic = {
 
   followUserByUsername(id, username) {
     return (async () => {
-      const user = await User.findOne({ username }).lean()
+      const user = await User.findOne({ username })
 
       if (!user) throw Error(`username ${username} does not exist`)
 
       let result
 
-      if (user.private) result = await User.updateOne({ username }, { $push: { pending: id } })
-      else result = await User.updateOne({ username }, { $push: { followers: id } })
+      if (user.private) {
+        result = await User.updateOne({ username }, { $push: { pending: id } })
+      } else {
+        result = await User.updateOne({ username }, { $push: { followers: id } })
+        result = await User.updateOne({ _id: id }, { $push: { following: user.id } })
+      }
 
       return result
     })()
@@ -141,7 +163,10 @@ const logic = {
       const follower = await User.findOne({ username, followers: id })
 
       if (!follower) result = await User.updateOne({ username }, { $pull: { pending: id } })
-      else result = await User.updateOne({ username }, { $pull: { followers: id } })
+      else {
+        result = await User.updateOne({ username }, { $pull: { followers: id } })
+        result = await User.updateOne({ _id: id }, { $pull: { following: follower.id } })
+      }
 
       return result
     })()
@@ -168,19 +193,19 @@ const logic = {
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).exec()
 
-      thread.id = thread._id.toString()
-      delete thread._id
+      // thread.id = thread._id.toString()
+      // delete thread._id
 
-      thread.author.id = thread.author._id.toString()
-      delete thread.author._id
+      // thread.author.id = thread.author._id.toString()
+      // delete thread.author._id
 
-      thread.comments.forEach(comment => {
-        comment.id = comment._id.toString()
-        delete comment._id
+      // thread.comments.forEach(comment => {
+      //   comment.id = comment._id.toString()
+      //   delete comment._id
 
-        comment.author.id = comment.author._id.toString()
-        delete comment.author._id
-      })
+      //   comment.author.id = comment.author._id.toString()
+      //   delete comment.author._id
+      // })
 
       return thread
     })()
@@ -197,8 +222,6 @@ const logic = {
         { path: 'author', select: 'fullname username avatar'},
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).sort({ date: 'desc' }).exec()
-
-      debugger
 
       // threads.forEach(thread => {
       //   thread.id = thread._id.toString()
@@ -224,14 +247,10 @@ const logic = {
     return (async () => {
       const user = await User.findOne({ _id: uid }, { following: true }).lean()
 
-      debugger
-
       let threads = await Thread.find({ $or: [{ author: { $in: user.following } }, { shares: { $in: user.following } }] }).lean().populate([
         { path: 'author', select: 'fullname username avatar'},
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).sort({ date: 'desc' }).exec()
-
-      debugger
 
       // threads.forEach(thread => {
       //   thread.id = thread._id.toString()

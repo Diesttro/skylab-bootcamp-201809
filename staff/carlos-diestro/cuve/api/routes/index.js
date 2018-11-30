@@ -160,6 +160,22 @@ router.get('/users/:uid/following/threads', [jwtHelper, jsonBodyParser], async (
   }
 })
 
+router.get('/users/threads/:tid', async (req, res) => {
+  const { params: { tid } } = req
+
+  try {
+    const thread = await logic.retrieveThread(tid)
+
+    res.json({
+      data: thread
+    })
+  } catch (error) {
+    res.status(409).json({
+      error: error.message
+    })
+  }
+})
+
 router.post('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { uid }, sub } = req
 
@@ -184,8 +200,8 @@ router.delete('/users/:uid/threads/:tid', [jwtHelper, jsonBodyParser], async (re
   const { params: { uid, tid }, sub } = req
 
   try {
-    if (sub !== id) throw Error('token sub does not match with user id')
-
+    if (sub !== uid) throw Error('token sub does not match with user id')
+    
     const result = await logic.removeThread(tid, uid)
 
     res.json({

@@ -1,0 +1,44 @@
+.block {
+  padding: 1.25rem;
+  border-radius: 1.4rem;
+  background-color: #FFFFFF;
+}
+
+.block img {
+  border-radius: 2rem;
+}
+
+.thread .text {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.block .username {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: inherit;
+}
+
+.block .date {
+  font-size: 0.875rem;
+  color: #9E9E9E;
+}
+
+.block .statistics a {
+  font-weight: bold;
+  color: inherit;
+}
+
+.thread a.clicked {
+  color: #2196F3;
+}
+
+.block .write-thread {
+  border-radius: 1.2rem;
+  min-height: 5rem;
+  resize: none;
+}
+
+.block .char-count {
+  vertical-align: sub;
+}

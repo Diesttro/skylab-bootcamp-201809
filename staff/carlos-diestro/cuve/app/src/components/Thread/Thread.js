@@ -7,54 +7,6 @@ import logic from '../../logic'
 class Thread extends Component {
   state = {}
 
-  componentDidMount = () => {
-    //TODO
-  }
-
-  // shareLink = () => {
-  //   const shared = this.props.data.shares.find(share => logic._user.id === share)
-  //   let link
-
-  //   if (shared) link = <button type="button" className="btn btn-link clicked" onClick={this.handleUnshareClick}>SHARE</button>
-  //   else link = <button type="button" className="btn btn-link" onClick={this.handleShareClick}>SHARE</button>
-
-  //   return link
-  // }
-
-  // handleShareClick = async event => {
-  //   const res = await logic.shareThread(event.target.parentNode.parentNode.dataset.id)
-
-  //   this.props.update()
-  // }
-
-  // handleUnshareClick = async event => {
-  //   const res = await logic.unshareThread(event.target.parentNode.parentNode.dataset.id)
-
-  //   this.props.update()
-  // }
-
-  // likeLink = () => {
-  //   const liked = this.props.data.likes.find(like => logic._user.id === like)
-  //   let link
-
-  //   if (liked) link = <button type="button" className="btn btn-link clicked" onClick={this.handleUnlikeClick}>LIKE</button>
-  //   else link = <button type="button" className="btn btn-link" onClick={this.handleLikeClick}>LIKE</button>
-
-  //   return link
-  // }
-
-  // handleLikeClick = async event => {
-  //   const res = await logic.likeThread(event.target.parentNode.parentNode.dataset.id)
-
-  //   this.props.update()
-  // }
-
-  // handleUnlikeClick = async event => {
-  //   const res = await logic.unlikeThread(event.target.parentNode.parentNode.dataset.id)
-
-  //   this.props.update()
-  // }
-
   shareLink = id => {
     const shared = this.props.data.shares.find(share => logic._user.id === share)
     let link
@@ -66,15 +18,23 @@ class Thread extends Component {
   }
 
   handleShareClick = async id => {
-    const res = await logic.shareThread(id)
+    try {
+      const res = await logic.shareThread(id)
 
-    this.props.update()
+      this.props.update()
+    } catch (error) {
+      alert(error)
+    }
   }
 
   handleUnshareClick = async id => {
-    const res = await logic.unshareThread(id)
+    try {
+      const res = await logic.unshareThread(id)
 
-    this.props.update()
+      this.props.update()
+    } catch (error) {
+      alert(error)
+    }
   }
 
   likeLink = id => {
@@ -88,15 +48,39 @@ class Thread extends Component {
   }
 
   handleLikeClick = async id => {
-    const res = await logic.likeThread(id)
+    try {
+      const res = await logic.likeThread(id)
 
-    this.props.update()
+      this.props.update()
+    } catch (error) {
+      alert(error)
+    }
   }
 
   handleUnlikeClick = async id => {
-    const res = await logic.unlikeThread(id)
+    try {
+      const res = await logic.unlikeThread(id)
 
-    this.props.update()
+      this.props.update()
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+  deleteLink = id => {
+    if (logic._user.id === this.props.data.author._id) return <div className="col-3 statistics">
+      <button type="button" className="btn btn-link" onClick={() => this.handleDeleteClick(id)}>DELETE</button>
+    </div>
+  }
+
+  handleDeleteClick = async id => {
+    try {
+      const res = await logic.deleteThread(id)
+
+      this.props.update()
+    } catch (error) {
+      alert(error)
+    }
   }
 
   render() {
@@ -107,7 +91,7 @@ class Thread extends Component {
             <a href="#"><img src="https://via.placeholder.com/55x55.png?text=+" alt="" /></a>
           </div>
           <div className="col text">
-            <a href="#" className="username">@{this.props.data.author.username}</a>
+            <Link to={`/user/${this.props.data.author.username}`} className="username">@{this.props.data.author.username}</Link>
             <div className="row">
               <div className="col mb-3">
                 <time className="date">{new Date(this.props.data.date).toLocaleString()}</time>
@@ -118,9 +102,9 @@ class Thread extends Component {
                 <p>{this.props.data.text}</p>
               </div>
             </div>
-            <div className="row" data-id={this.props.data._id}>
+            {logic._user && <div className="row" data-id={this.props.data._id}>
               <div className="col-3 statistics">
-              <button type="button" className="btn btn-link">REPLY</button>
+              <Link to={`thread/${this.props.data._id}`}><button type="button" className="btn btn-link">REPLY</button></Link>
                 <span className="count ml-2">{this.props.data.comments.length}</span>
               </div>
               <div className="col-3 statistics">
@@ -131,7 +115,8 @@ class Thread extends Component {
                 {this.likeLink(this.props.data._id)}
                 <span className="count ml-2">{this.props.data.likes.length}</span>
               </div>
-            </div>
+              {this.deleteLink(this.props.data._id)}
+            </div>}
           </div>
         </div>
       </div>

@@ -4,6 +4,10 @@ const logic = {
   url: 'http://localhost:8080/api/',
   _user: JSON.parse(sessionStorage.getItem('user')) || null,
 
+  get loggedIn() {
+    return !!this._user
+  },
+
   async signUp(fullname, username, email, password, repassword) {
     validate([
       { key: 'fullname', value: fullname, type: String },
@@ -86,6 +90,32 @@ const logic = {
     return res
   },
 
+  async getUserDataByUsername(username) {
+    let endpoint = 'users/username/' + username
+    let headers = { 'Content-Type': 'application/json; charset=utf-8' }
+    
+    if (this.loggedIn) {
+      endpoint = 'users/username/' + username + '/' + this._user.id
+      headers = {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    const options = {
+      method: 'GET',
+      headers: headers
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    debugger
+    
+    if (res.error) throw Error(res.error)
+    
+    return res
+  },
+
   async getUserThreads() {
     const endpoint = 'users/' + this._user.id + '/threads'
     const options = {
@@ -93,6 +123,24 @@ const logic = {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+    
+    return res.data
+  },
+
+  async getThread(id) {
+    const endpoint = 'users/threads/' + id
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        // 'Authorization': 'Bearer ' + this._user.token
       }
     }
 
@@ -142,7 +190,32 @@ const logic = {
 
     if (res.error) throw Error(res.error)
 
-    return res.data
+    return res.message
+  },
+
+  async writeComment(id, text) {
+    debugger
+    validate([
+      { key: 'id', value: id, type: String },
+      { key: 'text', value: text, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/threads/' + id + '/comments'
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      },
+      body: JSON.stringify({ text })
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+debugger
+    if (res.error) throw Error(res.error)
+
+    return res.message
   },
 
   async shareThread(id) {
@@ -161,8 +234,6 @@ const logic = {
 
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
-
-    debugger
 
     if (res.error) throw Error(res.error)
 
@@ -185,8 +256,6 @@ const logic = {
 
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
-
-    debugger
 
     if (res.error) throw Error(res.error)
 
@@ -212,9 +281,7 @@ const logic = {
 
     if (res.error) throw Error(res.error)
 
-    debugger
-
-    return res.data
+    return res.message
   },
 
   async unlikeThread(id) {
@@ -234,12 +301,77 @@ const logic = {
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
 
-    debugger
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async deleteThread(id) {
+    validate([
+      { key: 'id', value: id, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/threads/' + id
+    
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
 
     if (res.error) throw Error(res.error)
 
     return res.data
-  }
+  },
+
+  async follow(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/follow/' + username
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async unfollow(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/unfollow/' + username
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
 }
 
 export default logic

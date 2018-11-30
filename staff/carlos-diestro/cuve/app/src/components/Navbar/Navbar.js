@@ -8,9 +8,9 @@ import logic from '../../logic'
 class Navbar extends Component {
   state = { }
 
-  componentWillUpdate() {
-    debugger
-  }
+  // componentWillUpdate() {
+  //   debugger
+  // }
 
   handleClickSignOut = event => {
     logic.signOut()
@@ -24,17 +24,19 @@ class Navbar extends Component {
             <Col className="col-2 text-left">
             <Link to="/home"><img className="logo img-fluid" src={logo} /></Link>
             </Col>
-            <Col>
+            {!!logic._user && <Col>
               <Input type="text" name="search" className="form-control" placeholder="Search people..." />
-            </Col>
-            <Col className="col-5 d-flex justify-content-end align-items-center">
+            </Col>}
+            {!!logic._user && <Col className="col-5 d-flex justify-content-end align-items-center">
               <nav className="mr-4">
-                <a href="#" className="mr-1">MESSAGES</a><span className="count">3</span>
-                <a href="#" className="mr-1 ml-2">NOTIFICATIONS</a><span className="count">1</span>
+                <a href="#" className="mr-1">MESSAGES</a>
+                {/* <span className="count">3</span> */}
+                <a href="#" className="mr-1 ml-2">NOTIFICATIONS</a>
+                {/* <span className="count">1</span> */}
                 <Link to="/" className="mr-1 ml-2" onClick={this.handleClickSignOut}>SIGN OUT</Link>
               </nav>
               <Link to="/profile"><img className="logo img-fluid" src="https://course_report_production.s3.amazonaws.com/rich/rich_files/rich_files/1809/s300/skylab-coders-academy-logo.jpg" /></Link>
-            </Col>
+            </Col>}
           </Row>
         </Container>
       </header>

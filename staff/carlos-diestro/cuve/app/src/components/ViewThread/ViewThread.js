@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './Home.css'
+import './ViewThread.css'
 import logo from '../../logo.svg'
 import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
@@ -8,26 +8,32 @@ import Sidebar from '../Sidebar/Sidebar'
 import Main from '../Main/Main'
 import logic from '../../logic'
 
-class Home extends Component {
-  state = { }
+class ViewThread extends Component {
+  state = { 
+    data: null
+  }
 
   componentWillMount = async () => {
-    debugger
-    const user = await logic.getUserData()
+    if (logic.loggedIn) {
+      try {
+        const data = await logic.getUserData()
 
-    this.setState(user)
+        this.setState(data)
+      } catch (error) {
+        alert(error)
+      }
+    }
   }
 
   render() {
-    debugger
     return (
       <div className="wrapper">
         <Navbar />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar path={this.props.location.pathname} />
-              <Main path={this.props.location.pathname} />
+              <Sidebar path={this.props.match.path.replace('/:id', '')} user={this.state.data} />
+              <Main path={this.props.match.path.replace('/:id', '')} thread={this.props.match.params.id} />
             </div>
           </div>
         </section>
@@ -36,4 +42,4 @@ class Home extends Component {
   }
 }
 
-export default Home
+export default ViewThread
