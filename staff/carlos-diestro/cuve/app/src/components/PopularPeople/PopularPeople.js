@@ -10,7 +10,7 @@ class PopularPeople extends Component {
   render() {
     return (
       <div>
-        <h3 class="mt-5 mb-3 font-weight-bold">Popular people</h3>
+        <h3 class="mb-3 font-weight-bold">Popular people</h3>
         <div class="block">
           <div class="row">
             <div class="col my-2"><img src="https://via.placeholder.com/55x55.png?text=+" alt="avatar" /></div>

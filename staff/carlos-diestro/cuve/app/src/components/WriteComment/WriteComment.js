@@ -6,15 +6,10 @@ import logic from '../../logic'
 
 class WriteComment extends Component {
   state = {
-    thread: this.props.thread,
     text: '',
     char: 20,
     maxChar: 20,
     fadeIn: false
-  }
-  
-  componentWillMount = () => {
-    debugger
   }
 
   handleChange = event => {
@@ -29,19 +24,16 @@ class WriteComment extends Component {
   handleSubmit = async event => {
     event.preventDefault()
     
-    const res = await logic.writeComment(this.state.thread, this.state.text)
-    
-    this.setState({ text: '', char: this.state.maxChar })
+    try {
+      debugger
+      const res = await logic.writeComment(this.props.match.params.id, this.state.text)
+      
+      this.setState({ text: '', char: this.state.maxChar })
 
-    // this.toggle()
-
-    // setTimeout(this.toggle, 2000);
-
-    this.props.update()
-  }
-
-  toggle = () => {
-    this.setState({ fadeIn: !this.state.fadeIn })
+      this.props.update()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -50,13 +42,8 @@ class WriteComment extends Component {
         <form onSubmit={this.handleSubmit}>
           <textarea className="form-control write-thread mb-1" value={this.state.text} onChange={this.handleChange}></textarea>
           <span className="mr-2 char-count">{this.state.char}</span>
-          <button type="submit" className="btn btn-primary mt-1" disabled={!!logic._user ? false: true}>Send</button>
+          <button type="submit" className="btn btn-primary mt-1" disabled={logic.isLoggedIn ? false: true}>Send</button>
         </form>
-        {/* <Fade in={this.state.fadeIn}>
-          <Alert color="success">
-            added
-          </Alert>
-        </Fade> */}
       </div>
     )
   }

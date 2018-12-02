@@ -68,7 +68,7 @@ class Thread extends Component {
   }
 
   deleteLink = id => {
-    if (logic._user.id === this.props.data.author._id) return <div className="col-3 statistics">
+    if (logic._user.id === this.props.data.author.id) return <div className="col-3 statistics">
       <button type="button" className="btn btn-link" onClick={() => this.handleDeleteClick(id)}>DELETE</button>
     </div>
   }
@@ -102,20 +102,20 @@ class Thread extends Component {
                 <p>{this.props.data.text}</p>
               </div>
             </div>
-            {logic._user && <div className="row" data-id={this.props.data._id}>
+            {logic._user && <div className="row" data-id={this.props.data.id}>
               <div className="col-3 statistics">
-              <Link to={`thread/${this.props.data._id}`}><button type="button" className="btn btn-link">REPLY</button></Link>
+              <Link to={`/thread/${this.props.data.id}`}><button type="button" className="btn btn-link">REPLY</button></Link>
                 <span className="count ml-2">{this.props.data.comments.length}</span>
               </div>
               <div className="col-3 statistics">
-                {this.shareLink(this.props.data._id)}
+                {this.shareLink(this.props.data.id)}
                 <span className="count ml-2">{this.props.data.shares.length}</span>
               </div>
               <div className="col-3 statistics">
-                {this.likeLink(this.props.data._id)}
+                {this.likeLink(this.props.data.id)}
                 <span className="count ml-2">{this.props.data.likes.length}</span>
               </div>
-              {this.deleteLink(this.props.data._id)}
+              {this.deleteLink(this.props.data.id)}
             </div>}
           </div>
         </div>

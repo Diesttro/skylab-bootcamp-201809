@@ -8,8 +8,7 @@ class WriteThread extends Component {
   state = {
     text: '',
     char: 20,
-    maxChar: 20,
-    fadeIn: false
+    maxChar: 20
   }
 
   handleChange = event => {
@@ -23,20 +22,15 @@ class WriteThread extends Component {
 
   handleSubmit = async event => {
     event.preventDefault()
+    try {
+      const res = await logic.writeThread(this.state.text)
 
-    const res = await logic.writeThread(this.state.text)
+      this.setState({ text: '', char: this.state.maxChar })
 
-    this.setState({ text: '', char: this.state.maxChar })
-
-    // this.toggle()
-
-    // setTimeout(this.toggle, 2000);
-
-    this.props.write()
-  }
-
-  toggle = () => {
-    this.setState({ fadeIn: !this.state.fadeIn })
+      this.props.update()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -47,11 +41,6 @@ class WriteThread extends Component {
           <span className="mr-2 char-count">{this.state.char}</span>
           <button type="submit" className="btn btn-primary mt-1">Send</button>
         </form>
-        {/* <Fade in={this.state.fadeIn}>
-          <Alert color="success">
-            added
-          </Alert>
-        </Fade> */}
       </div>
     )
   }

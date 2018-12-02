@@ -9,16 +9,15 @@ import Main from '../Main/Main'
 import logic from '../../logic'
 
 class ViewUser extends Component {
-  state = { 
-    data: null,
-    followed: 0
+  state = {
+    flag: false
   }
 
-  componentWillMount = async () => {
+  componentDidMount = async () => {
     try {
-      const data = await logic.getUserDataByUsername(this.props.match.params.username)
+      const user = await logic.getUserDataByUsername(this.props.match.params.username)
       
-      this.setState(data)
+      this.setState({ user: user })
     } catch (error) {
       alert(error)
     }
@@ -26,9 +25,9 @@ class ViewUser extends Component {
 
   update = async () => {
     try {
-      const data = await logic.getUserDataByUsername(this.props.match.params.username)
+      const user = await logic.getUserDataByUsername(this.props.match.params.username)
       
-      this.setState({ ...data, followed: ++this.state.followed })
+      this.setState({ user: user, flag: !this.state.flag })
     } catch (error) {
       alert(error)
     }
@@ -37,12 +36,12 @@ class ViewUser extends Component {
   render() {
     return (
       <div className="wrapper">
-        <Navbar />
+        <Navbar {...this.props} />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar path={this.props.match.path.replace('/:username', '')} user={this.state.data} {...this.props} update={this.update} />
-              <Main path={this.props.match.path.replace('/:username', '')} user={this.props.match.params.username} followed={this.state.followed} />
+              <Sidebar {...this.props} user={this.state.user} update={this.update} />
+              <Main {...this.props} user={this.state.user} update={this.update} />
             </div>
           </div>
         </section>

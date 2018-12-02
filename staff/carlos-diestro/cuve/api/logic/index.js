@@ -48,7 +48,10 @@ const logic = {
         password: false
       }
 
-      const user = await User.findById({ _id: id }, projection).lean().populate('followers', 'id fullname username avatar')
+      const user = await User.findById({ _id: id }, projection).lean().populate([
+        { path: 'followers', select: 'avatar fullname username' },
+        { path: 'pending', select: 'avatar fullname username' }
+      ])
 
       if (!user) throw Error(`username ${username} does not exist`)
 
@@ -131,9 +134,25 @@ const logic = {
 
   findUsersByUsername(username) {
     return (async () => {
-      const users = await User.find({ username: /'.*' + username + '.*'/ }).lean()
+      const users = await User.aggregate([
+        {
+          $match: { 
+            $or: [
+              { fullname: { $regex: username, $options: 'i' } },
+              { username: { $regex: username, $options: 'i' } }
+            ]
+          }
+        },
+        {
+          $project: { _id: 0, id: '$_id', avatar: 1, username: 1 }
+        }
+      ])
       
-      debugger
+      users.forEach(user => {
+        user.id = user.id.toString()
+      })
+
+      return users
     })()
   },
 
@@ -172,6 +191,24 @@ const logic = {
     })()
   },
 
+  acceptFollowerByUsername(id, username) {
+    return (async () => {
+      const follower = await User.findOne({ username })
+
+      await User.updateOne({ _id: id }, { $pull: { pending: follower.id } })
+      await User.updateOne({ _id: id }, { $push: { followers: follower.id } })
+      await User.updateOne({ _id: follower.id }, { $push: { following: id } })
+    })()
+  },
+
+  rejectFollowerByUsername(id, username) {
+    return (async () => {
+      const follower = await User.findOne({ username })
+
+      await User.updateOne({ _id: id }, { $pull: { pending: follower.id } })
+    })()
+  },
+
   addThread(uid, text, attached = null) {
     return (async () => {
       const thread = new Thread({ author: uid, text, attached })
@@ -193,19 +230,44 @@ const logic = {
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).exec()
 
-      // thread.id = thread._id.toString()
-      // delete thread._id
+      // const thread = await Thread.aggregate([
+      //   {
+      //     $match: { _id: ObjectId(id) }
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'users',
+      //       localField: 'author',
+      //       foreignField: '_id',
+      //       as: 'user'
+      //     }
+      //   },
+      //   {
+      //     $project: {
+      //       _id: 0,
+      //       id: '$_id',
+      //       text: 1,
+      //       'user.id': '$user._id',
+      //       'user.username': 1
+      //     }
+      //   }
+      // ])
 
-      // thread.author.id = thread.author._id.toString()
-      // delete thread.author._id
+      thread.id = thread._id.toString()
+      delete thread._id
 
-      // thread.comments.forEach(comment => {
-      //   comment.id = comment._id.toString()
-      //   delete comment._id
+      thread.author.id = thread.author._id.toString()
+      delete thread.author._id
 
-      //   comment.author.id = comment.author._id.toString()
-      //   delete comment.author._id
-      // })
+      thread.comments.forEach(comment => {
+        comment.id = comment._id.toString()
+        delete comment._id
+
+        if (comment.author._id) {
+          comment.author.id = comment.author._id.toString()
+          delete comment.author._id
+        }
+      })
 
       return thread
     })()
@@ -223,21 +285,25 @@ const logic = {
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).sort({ date: 'desc' }).exec()
 
-      // threads.forEach(thread => {
-      //   thread.id = thread._id.toString()
-      //   delete thread._id
+      threads.forEach(thread => {
+        thread.id = thread._id.toString()
+        delete thread._id
 
-      //   thread.author.id = thread.author._id.toString()
-      //   delete thread.author._id
+        if (thread.author._id) {
+          thread.author.id = thread.author._id.toString()
+          delete thread.author._id
+        }
 
-      //   thread.comments.forEach(comment => {
-      //     comment.id = comment._id.toString()
-      //     delete comment._id
+        thread.comments.forEach(comment => {
+          comment.id = comment._id.toString()
+          delete comment._id
   
-      //     comment.author.id = comment.author._id.toString()
-      //     delete comment.author._id
-      //   })
-      // })
+          if (comment.author._id) {
+            comment.author.id = comment.author._id.toString()
+            delete comment.author._id
+          }
+        })
+      })
 
       return threads
     })()
@@ -252,21 +318,25 @@ const logic = {
         { path: 'comments.author', select: 'fullname username avatar'}
       ]).sort({ date: 'desc' }).exec()
 
-      // threads.forEach(thread => {
-      //   thread.id = thread._id.toString()
-      //   delete thread._id
+      threads.forEach(thread => {
+        thread.id = thread._id.toString()
+        delete thread._id
 
-      //   thread.author.id = thread.author._id.toString()
-      //   delete thread.author._id
+        if (thread.author._id) {
+          thread.author.id = thread.author._id.toString()
+          delete thread.author._id
+        }
 
-      //   thread.comments.forEach(comment => {
-      //     comment.id = comment._id.toString()
-      //     delete comment._id
+        thread.comments.forEach(comment => {
+          comment.id = comment._id.toString()
+          delete comment._id
   
-      //     comment.author.id = comment.author._id.toString()
-      //     delete comment.author._id
-      //   })
-      // })
+          if (comment.author._id) {
+            comment.author.id = comment.author._id.toString()
+            delete comment.author._id
+          }
+        })
+      })
 
       return threads
     })()
@@ -305,6 +375,62 @@ const logic = {
   unlikeThread(id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: id }, { $pull: { likes: uid } })
+    })()
+  },
+
+  retrievePopularPeople() {
+    return (async () => {
+      const popularPpl = await Thread.aggregate(
+        [
+          {
+            $group: {
+              _id: '$author',
+              count: { $sum: 1 }
+            }
+          },
+          {
+            $sort: { count: -1 }
+          },
+          {
+            $limit: 6
+          }
+          // {
+          //   $lookup: {
+          //     from: 'users',
+          //     localField: '_id',
+          //     foreignField: '_id',
+          //     as: 'user'
+          //   }
+          // }
+        ]
+      )
+
+      const users = await User.find({ _id: { $in: popularPpl } }, { _id: 0, avatar: 1, username: 1 }).lean()
+
+      return users
+    })()
+  },
+
+  sendMessage(sender, receiver, text) {
+    return (async () => {
+      const messages = [{
+        sender,
+        text
+      }]
+
+      const chat = await Chat.findOne({ members: { $all: [sender, receiver] } })
+      
+      if (chat) {
+        const result = await Chat.updateOne({ _id: chat.id }, { $push: { messages } })
+        
+        return result
+      } else {
+        const members = [sender, receiver]
+
+        const newChat = new Chat({ members, messages })
+
+        return newChat.save()
+      }
     })()
   }
 }

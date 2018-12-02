@@ -4,7 +4,7 @@ const logic = {
   url: 'http://localhost:8080/api/',
   _user: JSON.parse(sessionStorage.getItem('user')) || null,
 
-  get loggedIn() {
+  get isLoggedIn() {
     return !!this._user
   },
 
@@ -87,14 +87,18 @@ const logic = {
     
     if (res.error) throw Error(res.error)
     
-    return res
+    return res.data
   },
 
   async getUserDataByUsername(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
     let endpoint = 'users/username/' + username
     let headers = { 'Content-Type': 'application/json; charset=utf-8' }
     
-    if (this.loggedIn) {
+    if (this.isLoggedIn) {
       endpoint = 'users/username/' + username + '/' + this._user.id
       headers = {
         'Content-Type': 'application/json; charset=utf-8',
@@ -109,11 +113,65 @@ const logic = {
 
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
-    debugger
     
     if (res.error) throw Error(res.error)
     
-    return res
+    return res.data
+  },
+
+  async saveChanges(avatar, fullname, username, email, priv) {
+    // validate([
+    //   { key: 'text', value: text, type: String }
+    // ])
+
+    let formData = new FormData()
+
+    formData.append('avatar', avatar)
+    formData.append('fullname', fullname)
+    formData.append('username', username)
+    formData.append('email', email)
+    formData.append('private', priv)
+
+    const endpoint = 'users/' + this._user.id + '/update'
+    const options = {
+      method: 'POST',
+      headers: {
+        // 'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      },
+      body: formData
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    debugger
+
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async searchUser(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
+    const endpoint = 'users/search/' + username
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        // 'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+    
+    return res.data
   },
 
   async getUserThreads() {
@@ -135,6 +193,10 @@ const logic = {
   },
 
   async getThread(id) {
+    validate([
+      { key: 'id', value: id, type: String }
+    ])
+
     const endpoint = 'users/threads/' + id
     const options = {
       method: 'GET',
@@ -358,6 +420,28 @@ debugger
 
     const endpoint = 'users/' + this._user.id + '/unfollow/' + username
     const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async acceptFollow(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/follow/' + username + '/accept'
+    const options = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -372,6 +456,28 @@ debugger
 
     return res.message
   },
+
+  async rejectFollow(username) {
+    validate([
+      { key: 'username', value: username, type: String }
+    ])
+
+    const endpoint = 'users/' + this._user.id + '/follow/' + username + '/reject'
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  }
 }
 
 export default logic

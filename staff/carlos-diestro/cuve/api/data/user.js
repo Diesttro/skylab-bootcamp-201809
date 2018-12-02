@@ -6,7 +6,8 @@ const User = new Schema({
     required: true
   },
   avatar: {
-    type: String
+    type: String,
+    default: 'https://dummyimage.com/60x60/707070&text=+'
   },
   fullname: {
     type: String,
@@ -17,7 +18,8 @@ const User = new Schema({
     required: true
   },
   description: {
-    type: String
+    type: String,
+    default: ''
   },
   country: {
     type: String

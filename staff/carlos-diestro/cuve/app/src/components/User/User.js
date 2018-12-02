@@ -8,35 +8,44 @@ class User extends Component {
   state = {}
 
   componentDidUpdate = prevProps => {
-    if (this.props.user !== prevProps.user) {
+    if (!!this.props.user === !prevProps.user) {
+      if (logic.isLoggedIn && this.props.user.id === logic._user.id) return this.props.history.push('/profile')
+      
       this.setState(this.props.user)
     }
   }
 
-  followLink = id => {
+  profileLink = username => {
     let link
 
-    if (this.state.id === logic._user.id) {
-      link = <button type="button" className="btn btn-primary" onClick={() => this.handleEditClick(id)}>Edit profile</button>
+    if (this.props.user.id === logic._user.id) {
+      link = <button type="button" className="btn btn-primary" onClick={() => this.handleEditClick(username)}>Edit profile</button>
     } else {
-      const followed = this.state.followers.find(follower => logic._user.id === follower)
-      const pending = this.state.pending.find(follower => logic._user.id === follower)
+      const followed = this.props.user.followers.find(follower => logic._user.id === follower)
 
-      if (followed) link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(id)}>Unfollow</button>
-      else if (pending) link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(id)}>Unfollow</button>
-      else link = <button type="button" className="btn btn-primary" onClick={() => this.handlefollowClick(id)}>Follow</button>
+      if (followed) {
+        link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
+      } else {
+        const pending = this.props.user.pending.find(follower => logic._user.id === follower)
+        
+        if (pending) {
+          link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
+        } else {
+          link = <button type="button" className="btn btn-primary" onClick={() => this.handlefollowClick(username)}>Follow</button>
+        }
+      }
     }
 
     return link
   }
 
   handleEditClick = () => {
-    this.props.history.push('/profile/edit')
+    this.props.history.push('/edit')
   }
 
-  handlefollowClick = async id => {
+  handlefollowClick = async username => {
     try {
-      const res = await logic.follow(this.state.username)
+      const res = await logic.follow(this.props.user.username)
 
       this.props.update()
     } catch (error) {
@@ -44,9 +53,9 @@ class User extends Component {
     }
   }
 
-  handleUnfollowClick = async id => {
+  handleUnfollowClick = async username => {
     try {
-      const res = await logic.unfollow(this.state.username)
+      const res = await logic.unfollow(this.props.user.username)
 
       this.props.update()
     } catch (error) {
@@ -59,19 +68,27 @@ class User extends Component {
       <div>
         <h3 className="mb-3 font-weight-bold">Profile</h3>
         <div className="block">
-          <div className="row">
-            <div className="col my-2 text-center"><img className="avatar" src="https://via.placeholder.com/80x80.png?text=+" alt="avatar" /></div>
+          {this.props.user && <div className="row">
+            <div className="col my-2 text-center">
+              <img className="avatar" src={this.props.user.avatar} alt="avatar" />
+            </div>
             <div className="w-100"></div>
-            <div className="col"><strong>{this.state.fullname}</strong></div>
+            <div className="col">
+              {this.props.user.fullname}
+            </div>
             <div className="w-100"></div>
-            <div className="col">@{this.state.username}</div>
+            <div className="col">
+              @{this.props.user.username}
+            </div>
             <div className="w-100"></div>
-            <div className="col my-2">{new Date(this.state.signed).toLocaleString()}</div>
+            <div className="col">
+              {new Date(this.props.user.signed).toLocaleString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric' })}
+              </div>
             <div className="w-100"></div>
-            {logic.loggedIn && this.state.username && <div className="col my-2 text-center">
-              {this.followLink(this.state.username)}
+            {logic.isLoggedIn && this.props.user && <div className="col my-2 text-center">
+              {this.profileLink(this.props.user.username)}
             </div>}
-          </div>
+          </div>}
         </div>
       </div>
     )

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './Profile.css'
+import './Notification.css'
 import logo from '../../logo.svg'
 import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
@@ -8,33 +8,20 @@ import Sidebar from '../Sidebar/Sidebar'
 import Main from '../Main/Main'
 import logic from '../../logic'
 
-class Profile extends Component {
-  state = {}
-
-  componentDidMount = async () => {
-    try {
-      const user = await logic.getUserData()
-      
-      this.setState({ user: user })
-    } catch (error) {
-      console.error(error.message)
-    }
-  }
-
-  update = () => {
-    this.forceUpdate()
+class Notification extends Component {
+  state = {
+    flag: false
   }
 
   render() {
-    // debugger
     return (
       <div className="wrapper">
-        <Navbar {...this.props} user={this.state.user} />
+        <Navbar {...this.props} />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar {...this.props} user={this.state.user} update={this.update} />
-              <Main {...this.props} user={this.state.user} />
+              <Sidebar {...this.props} />
+              <Main {...this.props} />
             </div>
           </div>
         </section>
@@ -43,4 +30,4 @@ class Profile extends Component {
   }
 }
 
-export default Profile
+export default Notification

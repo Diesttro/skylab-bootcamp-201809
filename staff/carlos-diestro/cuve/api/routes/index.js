@@ -2,8 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const logic = require('../logic')
 const jwt = require('jsonwebtoken')
+const Busboy = require('busboy')
 const jwtHelper = require('../utils/jwt-helper')
-// const fs = require('fs')
 
 const jsonBodyParser = bodyParser.json()
 const router = express.Router()
@@ -50,6 +50,48 @@ router.post('/auth', jsonBodyParser, async (req, res) => {
   }
 })
 
+router.post('/users/:id/update', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { id }, sub } = req
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const fields = await new Promise((resolve, reject) => {
+      const busboy = new Busboy({ headers: req.headers })
+      let fields = {}
+
+      busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+        //TODO SAVE FILE
+        file.resume()
+      })
+
+      busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
+        fields[fieldname] = val
+      })
+
+      busboy.on('finish', () => {
+        resolve(fields)
+      })
+
+      busboy.on('error', err => {
+        reject(err)
+      })
+
+      req.pipe(busboy)
+    })
+
+    debugger
+
+    res.json({
+      message: 'changes saved'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
 router.get('/users/id/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { id }, sub } = req
 
@@ -61,6 +103,36 @@ router.get('/users/id/:id', [jwtHelper, jsonBodyParser], async (req, res) => {
     res.json({
       data: user,
       message: 'user found'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/search/:username/', jsonBodyParser, async (req, res) => {
+  const { params: { username } } = req
+
+  try {
+    const users = await logic.findUsersByUsername(username)
+
+    res.json({
+      data: users
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/popular', async (req, res) => {
+  try {
+    const users = await logic.retrievePopularPeople()
+
+    res.json({
+      data: users
     })
   } catch (error) {
     res.status(404).json({
@@ -104,7 +176,7 @@ router.post('/users/:id/follow/:username', [jwtHelper, jsonBodyParser], async (r
   }
 })
 
-router.post('/users/:id/unfollow/:username', [jwtHelper, jsonBodyParser], async (req, res) => {
+router.delete('/users/:id/unfollow/:username', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { username, id }, sub } = req
   
   try {
@@ -114,6 +186,42 @@ router.post('/users/:id/unfollow/:username', [jwtHelper, jsonBodyParser], async 
 
     res.json({
       message: 'user unfollowed'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:id/follow/:username/accept', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { username, id }, sub } = req
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const result = await logic.acceptFollowerByUsername(id, username)
+
+    res.json({
+      message: 'user accepted'
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
+
+router.delete('/users/:id/follow/:username/reject', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { username, id }, sub } = req
+  
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const result = await logic.rejectFollowerByUsername(id, username)
+
+    res.json({
+      message: 'user rejected'
     })
   } catch (error) {
     res.status(404).json({
@@ -134,7 +242,6 @@ router.get('/users/:uid/threads', [jwtHelper, jsonBodyParser], async (req, res) 
       data: threads
     })
   } catch (error) {
-    debugger
     res.status(409).json({
       error: error.message
     })
@@ -153,7 +260,6 @@ router.get('/users/:uid/following/threads', [jwtHelper, jsonBodyParser], async (
       data: threads
     })
   } catch (error) {
-    debugger
     res.status(409).json({
       error: error.message
     })
@@ -318,6 +424,31 @@ router.delete('/users/:uid/threads/:tid/unlike', [jwtHelper, jsonBodyParser], as
       message: 'thread unliked'
     })
   } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.post('/users/:id/message', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { id }, sub } = req
+
+  const { to, text } = req.body
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    debugger
+
+    const result = await logic.sendMessage(id, to, text)
+
+    debugger
+
+    res.json({
+      message: 'message sended'
+    })
+  } catch (error) {
+    debugger
     res.status(500).json({
       error: error.message
     })

@@ -1,33 +1,36 @@
 import React, { Component } from 'react'
 import './Home.css'
-import logo from '../../logo.svg'
-import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
-import { Link } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
 import Sidebar from '../Sidebar/Sidebar'
 import Main from '../Main/Main'
 import logic from '../../logic'
 
 class Home extends Component {
-  state = { }
+  state = {}
 
-  componentWillMount = async () => {
-    debugger
-    const user = await logic.getUserData()
+  componentDidMount = async () => {
+    try {
+      const user = await logic.getUserData()
+      
+      this.setState({ user: user })
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
-    this.setState(user)
+  update = () => {
+    this.forceUpdate()
   }
 
   render() {
-    debugger
     return (
       <div className="wrapper">
-        <Navbar />
+        <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar path={this.props.location.pathname} />
-              <Main path={this.props.location.pathname} />
+              <Sidebar {...this.props} user={this.state.user} />
+              <Main {...this.props} user={this.state.user} />
             </div>
           </div>
         </section>

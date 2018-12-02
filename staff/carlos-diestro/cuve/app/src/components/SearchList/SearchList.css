@@ -13,10 +13,6 @@
   padding-left: 0;
 }
 
-.edit .form-control {
-  border-radius: 2rem;
-}
-
 .block .username {
   font-size: 1.125rem;
   font-weight: bold;
@@ -28,19 +24,20 @@
   color: #9E9E9E;
 }
 
-.block .statistics a {
+.block .statistics .btn {
+  padding: 0;
   font-weight: bold;
   color: inherit;
 }
 
-.thread a.clicked {
+.block .statistics .count {
+  vertical-align: middle;
+}
+
+.block .statistics .clicked {
   color: #2196F3;
 }
 
-.custom-file-label, .input-group-text {
-  border-radius: 25px;
-}
-
-.custom-file-label::after {
-  border-radius: 0 25px 25px 0;
+.btn-link.focus, .btn-link:focus {
+  text-decoration: none;
 }
