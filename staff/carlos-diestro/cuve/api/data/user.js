@@ -7,7 +7,7 @@ const User = new Schema({
   },
   avatar: {
     type: String,
-    default: 'https://dummyimage.com/60x60/707070&text=+'
+    default: '/users/default.png'
   },
   fullname: {
     type: String,

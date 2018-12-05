@@ -11,6 +11,7 @@ import ViewUser from './components/ViewUser/ViewUser'
 import ViewThread from './components/ViewThread/ViewThread'
 import NotFound from './components/NotFound/NotFound'
 import Notification from './components/Notification/Notification'
+import Navbar from './components/Navbar/Navbar'
 
 import logic from './logic'
 
@@ -21,8 +22,7 @@ class App extends Component {
         <Route exact path="/" render={() => logic.isLoggedIn ? <Redirect to="/home" /> : <Landing />} />
         <Route exact path="/sign-up" render={props => logic.isLoggedIn ? <Redirect to="/home" /> : <SignUp {...props} />} />
         <Route exact path="/sign-in" render={props => logic.isLoggedIn ? <Redirect to="/home" /> : <SignIn {...props} />} />
-        {/* <Route path="/(home|user|thread)/" component={Navbar} /> */}
-        <Route exact path="/home" render={props => logic.isLoggedIn ? <Home {...props} /> : <Redirect to="/" /> } />
+        <Route path="/home" render={props => logic.isLoggedIn ? <Home {...props} /> : <Redirect to="/" /> } />
         <Route path="/search/:username" component={Search} />
         <Route path="/user/:username" component={ViewUser} />
         <Route path="/thread/:id" component={ViewThread} />

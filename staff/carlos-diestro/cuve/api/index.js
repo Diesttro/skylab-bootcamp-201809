@@ -15,6 +15,8 @@ mongoose.connect(MONGO_URL, { useCreateIndex: true, useNewUrlParser: true })
 
     const app = express()
 
+    app.use(express.static('public'))
+
     app.use(cors)
 
     app.use('/api', router)

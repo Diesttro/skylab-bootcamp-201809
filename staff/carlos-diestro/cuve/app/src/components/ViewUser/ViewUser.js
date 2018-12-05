@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import './ViewUser.css'
-import logo from '../../logo.svg'
-import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
 import Sidebar from '../Sidebar/Sidebar'
@@ -20,6 +18,18 @@ class ViewUser extends Component {
       this.setState({ user: user })
     } catch (error) {
       alert(error)
+    }
+  }
+
+  componentDidUpdate = async prevProps => {
+    if (this.props.match.params.username !== prevProps.match.params.username) {
+      try {
+        const user = await logic.getUserDataByUsername(this.props.match.params.username)
+        
+        this.setState({ user: user })
+      } catch (error) {
+        alert(error)
+      }
     }
   }
 

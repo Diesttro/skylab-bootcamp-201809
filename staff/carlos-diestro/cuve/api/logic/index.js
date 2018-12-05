@@ -1,3 +1,7 @@
+const fs = require('fs')
+const path = require('path')
+const url = require('url')
+const ip = require('ip')
 const { User, Thread, Chat } = require('../data')
 
 const logic = {
@@ -99,29 +103,57 @@ const logic = {
       }
 
       let user = await User.findOne({ username }).lean()
-      
+
       if (!user) throw Error(`user ${username} does not exist`)
 
       const blocked = user.blocked.find(bid => bid.toString() === id)
 
       if (blocked) user = await User.findOne({ username }, notFollowerProjection).lean()
       else if (user.private) {
-        user = await User.findOne({ username, followers: id }, followerProjection).lean()
-        
+        user = await User.findOne({ username, followers: id }, followerProjection).lean().populate([{ path: 'followers', select: 'avatar username' }, { path: 'following', select: 'avatar username' }])
+
         if (!user) {
           user = await User.findOne({ username }, notFollowerProjection).lean()
         } else {
           const threads = await this.retrieveUserThreads(user._id.toString())
 
           user.threads = threads
+
+          user.followers.forEach(user => {
+            if (user._id) {
+              user.id = user._id.toString()
+              delete user._id
+            }
+          })
+  
+          user.following.forEach(user => {
+            if (user._id) {
+              user.id = user._id.toString()
+              delete user._id
+            }
+          })
         }
       }
       else {
-        user = await User.findOne({ username }, followerProjection).lean()
+        user = await User.findOne({ username }, followerProjection).lean().populate([{ path: 'followers', select: 'avatar username' }, { path: 'following', select: 'avatar username' }])
 
         const threads = await this.retrieveUserThreads(user._id.toString())
 
         user.threads = threads
+
+        user.followers.forEach(user => {
+          if (user._id) {
+            user.id = user._id.toString()
+            delete user._id
+          }
+        })
+
+        user.following.forEach(user => {
+          if (user._id) {
+            user.id = user._id.toString()
+            delete user._id
+          }
+        })
       }
 
       user.id = user._id.toString()
@@ -136,7 +168,7 @@ const logic = {
     return (async () => {
       const users = await User.aggregate([
         {
-          $match: { 
+          $match: {
             $or: [
               { fullname: { $regex: username, $options: 'i' } },
               { username: { $regex: username, $options: 'i' } }
@@ -147,7 +179,7 @@ const logic = {
           $project: { _id: 0, id: '$_id', avatar: 1, username: 1 }
         }
       ])
-      
+
       users.forEach(user => {
         user.id = user.id.toString()
       })
@@ -225,9 +257,9 @@ const logic = {
 
   retrieveThread(id) {
     return (async () => {
-      let thread =  await Thread.findById(id).lean().populate([
-        { path: 'author', select: 'fullname username avatar'},
-        { path: 'comments.author', select: 'fullname username avatar'}
+      let thread = await Thread.findById(id).lean().populate([
+        { path: 'author', select: 'fullname username avatar' },
+        { path: 'comments.author', select: 'fullname username avatar' }
       ]).exec()
 
       // const thread = await Thread.aggregate([
@@ -281,8 +313,8 @@ const logic = {
   retrieveUserThreads(uid) {
     return (async () => {
       let threads = await Thread.find({ $or: [{ author: uid }, { shares: uid }] }).lean().populate([
-        { path: 'author', select: 'fullname username avatar'},
-        { path: 'comments.author', select: 'fullname username avatar'}
+        { path: 'author', select: 'fullname username avatar' },
+        { path: 'comments.author', select: 'fullname username avatar' }
       ]).sort({ date: 'desc' }).exec()
 
       threads.forEach(thread => {
@@ -297,7 +329,7 @@ const logic = {
         thread.comments.forEach(comment => {
           comment.id = comment._id.toString()
           delete comment._id
-  
+
           if (comment.author._id) {
             comment.author.id = comment.author._id.toString()
             delete comment.author._id
@@ -314,8 +346,8 @@ const logic = {
       const user = await User.findOne({ _id: uid }, { following: true }).lean()
 
       let threads = await Thread.find({ $or: [{ author: { $in: user.following } }, { shares: { $in: user.following } }] }).lean().populate([
-        { path: 'author', select: 'fullname username avatar'},
-        { path: 'comments.author', select: 'fullname username avatar'}
+        { path: 'author', select: 'fullname username avatar' },
+        { path: 'comments.author', select: 'fullname username avatar' }
       ]).sort({ date: 'desc' }).exec()
 
       threads.forEach(thread => {
@@ -330,7 +362,7 @@ const logic = {
         thread.comments.forEach(comment => {
           comment.id = comment._id.toString()
           delete comment._id
-  
+
           if (comment.author._id) {
             comment.author.id = comment.author._id.toString()
             delete comment.author._id
@@ -411,18 +443,20 @@ const logic = {
     })()
   },
 
-  sendMessage(sender, receiver, text) {
+  saveMessage(sender, receiver, text) {
     return (async () => {
+      // const members = [sender, receiver]
       const messages = [{
         sender,
         text
       }]
 
+      // OLD LOGIC
       const chat = await Chat.findOne({ members: { $all: [sender, receiver] } })
-      
+
       if (chat) {
         const result = await Chat.updateOne({ _id: chat.id }, { $push: { messages } })
-        
+
         return result
       } else {
         const members = [sender, receiver]
@@ -431,7 +465,150 @@ const logic = {
 
         return newChat.save()
       }
+
+      // const chat = await Chat.findOne({ _id: id })
+
+      // if (!chat) {
+      //   const newChat = new Chat({ members, messages })
+
+      //   return newChat.save()
+      // } else {
+      //   return await Chat.updateOne({ _id: id }, { $push: { messages } })
+      // }
     })()
+  },
+
+  retrieveUserChats(id) {
+    return (async () => {
+      const chats = await Chat.find({ members: id }, { __v: 0, 'messages._id': 0 }).lean().populate([
+        { path: 'members', select: '_id avatar username' },
+        { path: 'messages.sender', select: '_id' }
+      ])
+
+      if (!chats) return []
+
+      chats.forEach(chat => {
+        chat.id = chat._id.toString()
+        delete chat._id
+
+        chat.members.forEach(member => {
+          if (member._id) {
+            member.id = member._id.toString()
+            delete member._id
+          }
+        })
+
+        chat.messages.forEach(message => {
+          if (message.sender._id) {
+            message.sender.id = message.sender._id.toString()
+            delete message.sender._id
+          }
+        })
+      })
+
+      return chats
+    })()
+  },
+
+  retrieveChat(id) {
+    return (async () => {
+      const chat = await Chat.findOne({ _id: id }, { __v: 0, 'messages._id': 0 }).lean().populate([
+        { path: 'members', select: '_id avatar username' },
+        { path: 'messages.sender', select: '_id' }
+      ])
+
+      if (!chat) throw Error('chat not found')
+
+      chat.id = chat._id.toString()
+      delete chat._id
+
+      chat.members.forEach(member => {
+        if (member._id) {
+          member.id = member._id.toString()
+          delete member._id
+        }
+      })
+
+      chat.messages.forEach(message => {
+        if (message.sender._id) {
+          message.sender.id = message.sender._id.toString()
+          delete message.sender._id
+        }
+      })
+
+      return chat
+    })()
+  },
+
+  async readChat() {
+    try {
+      const chat = await Chat.update(
+        { 
+          $and: [
+            { _id: '5c070f20da3f341be4481c8c' },
+            { messages: { $elemMatch: { sender: '5c070e65da3f341be4481c89' } } } 
+          ]
+        },
+        {
+          $set: { 'messages.$[].read': false }
+        }
+      )
+      debugger
+    } catch (error) {
+      debugger
+    }
+  },
+
+  saveUserPhoto(id, file, type) {
+    const folder = '/users'
+    const pathDir = 'public' + folder
+    const filename = id + '.' + type
+
+    return new Promise((resolve, reject) => {
+      try {
+        const pathToFile = path.join(pathDir, filename)
+        const pathToUrl = 'http://' + ip.address() + ':' + process.env.PORT + folder + '/' + filename
+
+        const ws = fs.createWriteStream(pathToFile)
+
+        file.pipe(ws)
+
+        file.on('end', () => resolve(pathToUrl))
+
+        file.on('error', reject)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  },
+
+  async retrieveFollowersByUsername(username) {
+    return await User.find({ username }, { followers: 1, _id: 0}).lean().populate({ path: 'followers', select: 'avatar username -_id' })
+  },
+
+  async retrieveFollowingByUsername(username) {
+    return await User.find({ username }, { following: 1, _id: 0}).lean().populate({ path: 'following', select: 'avatar username -_id' })
+  },
+
+  saveUserChanges(id, changes) {
+    return (async () => {
+      await User.updateOne({ _id: id }, { $set: changes })
+    })()
+  },
+
+  saveImage(id, img, type, dir) {
+    const folder = '../public' + dir
+    const filename = id + '.' + type
+
+    pathFile = path.join(__dirname, folder + filename)
+
+    try {
+      fs.writeFileSync(pathFile, img, 'binary')
+
+      return  dir + filename
+    } catch (error) {
+      throw Error(error)
+    }
   }
 }
 

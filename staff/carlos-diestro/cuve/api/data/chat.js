@@ -21,7 +21,11 @@ const Chat = new Schema({
       type: Date,
       default: Date.now
     }
-  }]
+  }],
+  last: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 module.exports = Chat

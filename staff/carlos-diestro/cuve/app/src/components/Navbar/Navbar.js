@@ -53,7 +53,7 @@ class Navbar extends Component {
               {this.state.notifications && <span className="count">{this.state.notifications}</span>}
               <Link to="/" className="mr-1 ml-2" onClick={this.handleClickSignOut}>SIGN OUT</Link>
             </nav>
-            {this.props.user && <Link to="/profile"><img className="logo img-fluid" src={this.props.user.avatar} /></Link>}
+            {this.props.user && <Link to="/profile"><img className="logo img-fluid" src={logic.url + this.props.user.avatar} /></Link>}
           </div>
         </div>
       )

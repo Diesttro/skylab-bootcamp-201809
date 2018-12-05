@@ -1,0 +1,48 @@
+.block {
+  padding: 1.25rem;
+  border-radius: 1.4rem;
+  background-color: #FFFFFF;
+}
+
+.block img {
+  border-radius: 25px;
+  max-width: 60px;
+  max-height: 60px;
+}
+
+.thread .text {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.edit .form-control {
+  border-radius: 2rem;
+}
+
+.block .username {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: inherit;
+}
+
+.block .date {
+  font-size: 0.875rem;
+  color: #9E9E9E;
+}
+
+.block .statistics a {
+  font-weight: bold;
+  color: inherit;
+}
+
+.thread a.clicked {
+  color: #2196F3;
+}
+
+.custom-file-label, .input-group-text {
+  border-radius: 25px;
+}
+
+.custom-file-label::after {
+  border-radius: 0 25px 25px 0;
+}

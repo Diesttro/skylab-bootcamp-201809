@@ -7,13 +7,14 @@ import logic from '../../logic'
 class User extends Component {
   state = {}
 
-  componentDidUpdate = prevProps => {
-    if (!!this.props.user === !prevProps.user) {
-      if (logic.isLoggedIn && this.props.user.id === logic._user.id) return this.props.history.push('/profile')
-      
-      this.setState(this.props.user)
-    }
-  }
+  // componentDidUpdate = prevProps => {
+  //   debugger
+  //   if (!!this.props.user === !prevProps.user) {
+  //     if (logic.isLoggedIn && this.props.user.id === logic._user.id) return this.props.history.push('/profile')
+  //     debugger
+  //     this.setState(this.props.user)
+  //   }
+  // }
 
   profileLink = username => {
     let link
@@ -21,12 +22,12 @@ class User extends Component {
     if (this.props.user.id === logic._user.id) {
       link = <button type="button" className="btn btn-primary" onClick={() => this.handleEditClick(username)}>Edit profile</button>
     } else {
-      const followed = this.props.user.followers.find(follower => logic._user.id === follower)
-
+      const followed = this.props.user.followers.find(user => logic._user.id === user.id)
+      
       if (followed) {
         link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
       } else {
-        const pending = this.props.user.pending.find(follower => logic._user.id === follower)
+        const pending = this.props.user.pending.find(user => logic._user.id === user.id)
         
         if (pending) {
           link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
@@ -70,7 +71,7 @@ class User extends Component {
         <div className="block">
           {this.props.user && <div className="row">
             <div className="col my-2 text-center">
-              <img className="avatar" src={this.props.user.avatar} alt="avatar" />
+              <img className="avatar" src={logic.url + this.props.user.avatar} alt="avatar" />
             </div>
             <div className="w-100"></div>
             <div className="col">

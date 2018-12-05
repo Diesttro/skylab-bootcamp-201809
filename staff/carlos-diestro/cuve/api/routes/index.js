@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const fileUpload = require('express-fileupload')
 const logic = require('../logic')
 const jwt = require('jsonwebtoken')
 const Busboy = require('busboy')
@@ -12,8 +13,6 @@ const { env: { JWT_SECRET } } = process
 
 router.post('/register', jsonBodyParser, async (req, res) => {
   const { fullname, username, email, password } = req.body
-
-  debugger
 
   try {
     await logic.register(fullname, username, email, password)
@@ -50,37 +49,17 @@ router.post('/auth', jsonBodyParser, async (req, res) => {
   }
 })
 
-router.post('/users/:id/update', [jwtHelper, jsonBodyParser], async (req, res) => {
+router.post('/users/:id/update', [jwtHelper, fileUpload(), jsonBodyParser], async (req, res) => {
   const { params: { id }, sub } = req
 
   try {
     if (sub !== id) throw Error('token sub does not match with user id')
 
-    const fields = await new Promise((resolve, reject) => {
-      const busboy = new Busboy({ headers: req.headers })
-      let fields = {}
+    if (req.files) {
+      req.body.avatar = logic.saveImage(id, req.files.avatar.data, req.files.avatar.mimetype.split('/').pop(), '/users/')
+    }
 
-      busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-        //TODO SAVE FILE
-        file.resume()
-      })
-
-      busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated) {
-        fields[fieldname] = val
-      })
-
-      busboy.on('finish', () => {
-        resolve(fields)
-      })
-
-      busboy.on('error', err => {
-        reject(err)
-      })
-
-      req.pipe(busboy)
-    })
-
-    debugger
+    logic.saveUserChanges(id, req.body)
 
     res.json({
       message: 'changes saved'
@@ -430,7 +409,7 @@ router.delete('/users/:uid/threads/:tid/unlike', [jwtHelper, jsonBodyParser], as
   }
 })
 
-router.post('/users/:id/message', [jwtHelper, jsonBodyParser], async (req, res) => {
+router.post('/users/:id/chats', [jwtHelper, jsonBodyParser], async (req, res) => {
   const { params: { id }, sub } = req
 
   const { to, text } = req.body
@@ -438,17 +417,48 @@ router.post('/users/:id/message', [jwtHelper, jsonBodyParser], async (req, res) 
   try {
     if (sub !== id) throw Error('token sub does not match with user id')
 
-    debugger
-
-    const result = await logic.sendMessage(id, to, text)
-
-    debugger
+    const result = await logic.saveMessage(id, to, text)
 
     res.json({
       message: 'message sended'
     })
   } catch (error) {
-    debugger
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/:id/chats', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { id }, sub } = req
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const chats = await logic.retrieveUserChats(id)
+
+    res.json({
+      data: chats
+    })
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    })
+  }
+})
+
+router.get('/users/:id/chats/:cid', [jwtHelper, jsonBodyParser], async (req, res) => {
+  const { params: { id, cid }, sub } = req
+
+  try {
+    if (sub !== id) throw Error('token sub does not match with user id')
+
+    const chat = await logic.retrieveChat(cid)
+
+    res.json({
+      data: chat
+    })
+  } catch (error) {
     res.status(500).json({
       error: error.message
     })

@@ -2,13 +2,16 @@ import React, { Component } from 'react'
 import './Main.css'
 import WriteThread from '../WriteThread/WriteThread'
 import Threads from '../Threads/Threads'
+import Followers from '../Followers/Followers'
+import Following from '../Following/Following'
 import Edit from '../Edit/Edit'
 import SearchList from '../SearchList/SearchList'
 import NotificationList from '../NotificationList/NotificationList'
 
 class Main extends Component {
   state = {
-    flag: false
+    flag: false,
+    tab: 'threads'
   }
 
   loadComponent = () => {
@@ -33,8 +36,18 @@ class Main extends Component {
       case '/user':
         return (
           <div className="col-7 offset-1">
-            <h3 className="mb-3 font-weight-bold">Threads</h3>
-            <Threads {...this.props} user={this.props.user} followed={this.props.followed} />
+            <div className="row text-center">
+              <div className="col">
+                <button type="button" className={this.state.tab === 'threads' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('threads')}>Threads</button>
+              </div>
+              <div className="col">
+                <button type="button" className={this.state.tab === 'followers' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('followers')}>Followers</button>
+              </div>
+              <div className="col">
+                <button type="button" className={this.state.tab === 'following' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('following')}>Following</button>
+              </div>
+            </div>
+            {this.loadTab(this.state.tab)}
           </div>
         )
       case '/edit':
@@ -58,6 +71,21 @@ class Main extends Component {
             <NotificationList {...this.props} />
           </div>
         )
+    }
+  }
+
+  handleTabClick = tab => {
+    this.setState({ tab })
+  }
+
+  loadTab = tab => {
+    switch (tab) {
+      case 'threads':
+        return <Threads {...this.props} user={this.props.user} followed={this.props.followed} />
+      case 'followers':
+        return <Followers {...this.props} user={this.props.user} />
+      case 'following':
+        return <Following {...this.props} user={this.props.user} />
     }
   }
 
