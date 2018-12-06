@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './User.css'
-import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Redirect, Link } from 'react-router-dom'
 import logic from '../../logic'
 
@@ -20,19 +19,23 @@ class User extends Component {
     let link
 
     if (this.props.user.id === logic._user.id) {
-      link = <button type="button" className="btn btn-primary" onClick={() => this.handleEditClick(username)}>Edit profile</button>
+      link = <button type="button" className="btn btn-primary" onClick={this.handleEditClick}>Edit profile</button>
     } else {
       const followed = this.props.user.followers.find(user => logic._user.id === user.id)
       
       if (followed) {
-        link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
+        link = <div>
+            <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
+            <br />
+            <button type="button" className="btn btn-success mt-2" onClick={this.handleChatClick}>Chat</button>
+          </div>
       } else {
-        const pending = this.props.user.pending.find(user => logic._user.id === user.id)
+        const pending = this.props.user.pending.find(user => logic._user.id === user)
         
         if (pending) {
-          link = <button type="button" className="btn btn-primary" onClick={() => this.handleUnfollowClick(username)}>Unfollow</button>
+          link = <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
         } else {
-          link = <button type="button" className="btn btn-primary" onClick={() => this.handlefollowClick(username)}>Follow</button>
+          link = <button type="button" className="btn btn-primary" onClick={this.handlefollowClick}>Follow</button>
         }
       }
     }
@@ -44,7 +47,7 @@ class User extends Component {
     this.props.history.push('/edit')
   }
 
-  handlefollowClick = async username => {
+  handlefollowClick = async () => {
     try {
       const res = await logic.follow(this.props.user.username)
 
@@ -54,13 +57,23 @@ class User extends Component {
     }
   }
 
-  handleUnfollowClick = async username => {
+  handleUnfollowClick = async () => {
     try {
       const res = await logic.unfollow(this.props.user.username)
 
       this.props.update()
     } catch (error) {
-      alert(error)
+      console.error(error.message)
+    }
+  }
+
+  handleChatClick = async () => {
+    try {
+      const init = await logic.initChat(this.props.user.id)
+
+      this.props.history.push('/chats')
+    } catch(error) {
+      console.error(error.message)
     }
   }
 

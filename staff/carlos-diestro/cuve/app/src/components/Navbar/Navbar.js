@@ -47,7 +47,7 @@ class Navbar extends Component {
           </div>
           <div className="col-5 d-flex justify-content-end align-items-center">
             <nav className="mr-4">
-              <a href="#" className="mr-1">MESSAGES</a>
+              <Link to="/chats" className="mr-1">MESSAGES</Link>
               {/* <span className="count">3</span> */}
               <Link to="/notifications" className="mr-1 ml-2">NOTIFICATIONS</Link>
               {this.state.notifications && <span className="count">{this.state.notifications}</span>}

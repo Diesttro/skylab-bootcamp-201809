@@ -13,10 +13,20 @@ class Notification extends Component {
     flag: false
   }
 
+  componentDidMount = async () => {
+    try {
+      const user = await logic.getUserData()
+      
+      this.setState({ user: user })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   render() {
     return (
       <div className="wrapper">
-        <Navbar {...this.props} />
+        <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
             <div className="row mt-5">

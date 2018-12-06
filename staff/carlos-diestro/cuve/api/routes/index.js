@@ -3,7 +3,6 @@ const bodyParser = require('body-parser')
 const fileUpload = require('express-fileupload')
 const logic = require('../logic')
 const jwt = require('jsonwebtoken')
-const Busboy = require('busboy')
 const jwtHelper = require('../utils/jwt-helper')
 
 const jsonBodyParser = bodyParser.json()
@@ -59,7 +58,7 @@ router.post('/users/:id/update', [jwtHelper, fileUpload(), jsonBodyParser], asyn
       req.body.avatar = logic.saveImage(id, req.files.avatar.data, req.files.avatar.mimetype.split('/').pop(), '/users/')
     }
 
-    logic.saveUserChanges(id, req.body)
+    await logic.saveUserChanges(id, req.body)
 
     res.json({
       message: 'changes saved'
@@ -417,7 +416,11 @@ router.post('/users/:id/chats', [jwtHelper, jsonBodyParser], async (req, res) =>
   try {
     if (sub !== id) throw Error('token sub does not match with user id')
 
-    const result = await logic.saveMessage(id, to, text)
+    const chat = await logic.saveMessage(id, to, text)
+
+    debugger
+
+    // io.sockets.emit('refresh', chat)
 
     res.json({
       message: 'message sended'
@@ -464,5 +467,11 @@ router.get('/users/:id/chats/:cid', [jwtHelper, jsonBodyParser], async (req, res
     })
   }
 })
+
+// module.exports = io => {
+//   router.io = io
+
+//   return router
+// }
 
 module.exports = router

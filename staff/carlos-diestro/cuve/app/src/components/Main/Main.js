@@ -7,6 +7,9 @@ import Following from '../Following/Following'
 import Edit from '../Edit/Edit'
 import SearchList from '../SearchList/SearchList'
 import NotificationList from '../NotificationList/NotificationList'
+import ChatMessage from '../ChatMessage/ChatMessage'
+import Spinner from '../Spinner/Spinner'
+
 
 class Main extends Component {
   state = {
@@ -34,22 +37,34 @@ class Main extends Component {
           </div>
         )
       case '/user':
-        return (
-          <div className="col-7 offset-1">
-            <div className="row text-center">
-              <div className="col">
-                <button type="button" className={this.state.tab === 'threads' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('threads')}>Threads</button>
-              </div>
-              <div className="col">
-                <button type="button" className={this.state.tab === 'followers' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('followers')}>Followers</button>
-              </div>
-              <div className="col">
-                <button type="button" className={this.state.tab === 'following' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('following')}>Following</button>
-              </div>
+        let component
+
+        if (this.props.user) {
+          if (this.props.user.private && !this.props.user.threads) {
+            component = <div className="col-7 offset-1 text-center">
+              <h3 className="mb-3 font-weight-bold">User is private</h3>
             </div>
-            {this.loadTab(this.state.tab)}
-          </div>
-        )
+          } else {
+            component = <div className="col-7 offset-1">
+              <div className="row text-center">
+                <div className="col">
+                  <button type="button" className={this.state.tab === 'threads' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('threads')}>Threads</button>
+                </div>
+                <div className="col">
+                  <button type="button" className={this.state.tab === 'followers' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('followers')}>Followers</button>
+                </div>
+                <div className="col">
+                  <button type="button" className={this.state.tab === 'following' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('following')}>Following</button>
+                </div>
+              </div>
+              {this.loadTab(this.state.tab)}
+            </div>
+          }
+        } else {
+          component = <Spinner />
+        }
+
+        return component
       case '/edit':
         return (
           <div className="col-7 offset-1">
@@ -69,6 +84,13 @@ class Main extends Component {
           <div className="col-7 offset-1">
             <h3 className="mb-3 font-weight-bold">Notifications</h3>
             <NotificationList {...this.props} />
+          </div>
+        )
+      case '/chats':
+        return (
+          <div className="col-7 offset-1">
+            <h3 className="mb-3 font-weight-bold">Messages</h3>
+            <ChatMessage {...this.props} />
           </div>
         )
     }

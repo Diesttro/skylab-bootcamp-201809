@@ -119,17 +119,38 @@ const logic = {
     return res.data
   },
 
-  async saveChanges(avatar, fullname, username, email, priv) {
-    // validate([
-    //   { key: 'text', value: text, type: String }
-    // ])
+  async saveChanges(avatar, fullname, username, email, description, priv) {
+    const acceptedTypes = [
+      'image/jpg',
+      'image/jpeg',
+      'image/gif',
+      'image/png'
+    ]
+    const maxSize = 300000
+
+    if (avatar.type)
+
+    validate([
+      { key: 'fullname', value: fullname, type: String },
+      { key: 'username', value: username, type: String },
+      { key: 'email', value: email, type: String },
+      { key: 'description', value: description, priv: String },
+      { key: 'priv', value: fullname, priv: Boolean }
+    ])
 
     let formData = new FormData()
 
-    formData.append('avatar', avatar)
+    if (typeof avatar === 'object') {
+      if (!acceptedTypes.includes(avatar.type)) throw Error('only images are allowed')
+      if (avatar.size > maxSize) throw Error('image should be 3mb maximum')
+
+      formData.append('avatar', avatar)
+    }
+
     formData.append('fullname', fullname)
     formData.append('username', username)
     formData.append('email', email)
+    formData.append('description', description)
     formData.append('private', priv)
 
     const endpoint = '/api/users/' + this._user.id + '/update'
@@ -145,7 +166,7 @@ const logic = {
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
 
-    if (res.error) throw Error(res.error)
+    if (res.error) throw Error('username is taken')
 
     return res.message
   },
@@ -471,6 +492,89 @@ const logic = {
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
 
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async getUserChats() {
+    const endpoint = '/api/users/' + this._user.id + '/chats'
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+    
+    return res.data
+  },
+
+  async getChat(id) {
+    const endpoint = '/api/users/' + this._user.id + '/chats/' + id
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      }
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+    
+    return res.data
+  },
+
+  async initChat(to) {
+    validate([
+      { key: 'to', value: to, type: String }
+    ])
+
+    const endpoint = '/api/users/' + this._user.id + '/chats'
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      },
+      body: JSON.stringify({ to })
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
+    if (res.error) throw Error(res.error)
+
+    return res.message
+  },
+
+  async sendMessage(to, text) {
+    validate([
+      { key: 'to', value: to, type: String },
+      { key: 'text', value: text, type: String }
+    ])
+
+    const endpoint = '/api/users/' + this._user.id + '/chats'
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer ' + this._user.token
+      },
+      body: JSON.stringify({ to, text })
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+    
     if (res.error) throw Error(res.error)
 
     return res.message

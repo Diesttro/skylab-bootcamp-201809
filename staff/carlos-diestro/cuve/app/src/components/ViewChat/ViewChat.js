@@ -1,26 +1,26 @@
 import React, { Component } from 'react'
-import './ViewThread.css'
-import logo from '../../logo.svg'
-import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
+import './ViewChat.css'
 import { Link } from 'react-router-dom'
 import Navbar from '../Navbar/Navbar'
 import Sidebar from '../Sidebar/Sidebar'
 import Main from '../Main/Main'
 import logic from '../../logic'
 
-class ViewThread extends Component {
+class ViewChat extends Component {
   state = {}
 
   componentDidMount = async () => {
-    if (logic.isLoggedIn) {
-      try {
-        const user = await logic.getUserData()
-        
-        this.setState({ user: user })
-      } catch (error) {
-        console.log(error)
-      }
+    try {
+      const user = await logic.getUserData()
+      
+      this.setState({ user: user })
+    } catch (error) {
+      console.error(error)
     }
+  }
+
+  update = chat => {
+    this.setState({ chat })
   }
 
   render() {
@@ -30,8 +30,8 @@ class ViewThread extends Component {
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar {...this.props} user={this.state.user} />
-              <Main {...this.props} user={this.state.user} />
+              <Sidebar {...this.props} user={this.state.user} update={this.update} />
+              <Main {...this.props} user={this.state.user} update={this.update} chat={this.state.chat} />
             </div>
           </div>
         </section>
@@ -40,4 +40,4 @@ class ViewThread extends Component {
   }
 }
 
-export default ViewThread
+export default ViewChat

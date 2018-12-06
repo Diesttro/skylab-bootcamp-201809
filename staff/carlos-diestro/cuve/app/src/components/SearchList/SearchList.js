@@ -38,7 +38,7 @@ class SearchList extends Component {
               {this.state.results.length ? this.state.results.map(user => (
                 <div className="row my-2">
                   <div className="col">
-                    <Link to={`/user/${user.username}`}><img src="https://via.placeholder.com/55x55.png?text=+" alt="" /> @{user.username}</Link>
+                    <Link to={`/user/${user.username}`}><img src={logic.url + user.avatar} alt="" /> @{user.username}</Link>
                   </div>
                 </div>
               )) : 'Nothing found'}

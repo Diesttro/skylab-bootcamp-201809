@@ -13,7 +13,7 @@ class Comment extends Component {
       <div className="block thread ml-2 my-3">
         <div className="row">
           <div className="col-2">
-            <a href="#"><img src="https://via.placeholder.com/55x55.png?text=+" alt="" /></a>
+            <a href="#"><img src={logic.url + this.props.data.author.avatar} alt="" /></a>
           </div>
           <div className="col text">
             <a href="#" className="username">@{this.props.data.author.username}</a>

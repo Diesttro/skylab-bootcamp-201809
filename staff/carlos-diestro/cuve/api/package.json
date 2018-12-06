@@ -18,7 +18,8 @@
     "express-fileupload": "^1.0.0",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.3.11"
+    "mongoose": "^5.3.11",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "chai": "^4.2.0"

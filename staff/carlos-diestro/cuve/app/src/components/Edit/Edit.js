@@ -50,28 +50,36 @@ class Edit extends Component {
   handleSubmit = async event => {
     event.preventDefault()
     
-    const result = await logic.saveChanges(
-      this.state.avatar,
-      this.state.fullname,
-      this.state.username,
-      this.state.email,
-      this.state.private
-    )
+    try {
+      const result = await logic.saveChanges(
+        this.state.avatar,
+        this.state.fullname,
+        this.state.username,
+        this.state.email,
+        this.state.description,
+        this.state.private
+      )
 
-    debugger
+      this.setState({ message: 'changes saved', ok: true })
+    } catch ({ message }) {
+      this.setState({ message, ok: false })
+    }
   }
 
   render() {
     return (
       <div>
-        {this.props.user && <form enctype="multipart/form-data" onSubmit={this.handleSubmit}>
+        { this.state.message && <div className={this.state.ok ? 'alert alert-success text-center' : 'alert alert-danger text-center'} role="alert">
+        { this.state.message }
+        </div> }
+        {this.state.avatar && <form enctype="multipart/form-data" onSubmit={this.handleSubmit}>
         <div className="block edit my-3">
           <div className="col">
             <div className="form-group">
               <label for="file">Avatar</label>
               <div class="custom-file">
                 <input type="file" name="avatar" class="custom-file-input" id="file" onChange={this.handleChange} />
-                <label class="custom-file-label" for="file">{this.state.avatar ? this.state.avatar.name: 'Choose file'}</label>
+                <label class="custom-file-label" for="file">{typeof this.state.avatar === 'string' ? 'Choose file' : this.state.avatar.name}</label>
               </div>
             </div>
           </div>

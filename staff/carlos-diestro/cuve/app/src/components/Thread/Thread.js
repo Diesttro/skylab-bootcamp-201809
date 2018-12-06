@@ -88,7 +88,7 @@ class Thread extends Component {
       <div className="block thread my-3">
         <div className="row">
           <div className="col-2">
-            <a href="#"><img src="https://via.placeholder.com/55x55.png?text=+" alt="" /></a>
+            <a href="#"><img src={logic.url + this.props.data.author.avatar} /></a>
           </div>
           <div className="col text">
             <Link to={`/user/${this.props.data.author.username}`} className="username">@{this.props.data.author.username}</Link>

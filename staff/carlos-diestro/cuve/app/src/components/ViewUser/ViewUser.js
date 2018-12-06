@@ -13,9 +13,16 @@ class ViewUser extends Component {
 
   componentDidMount = async () => {
     try {
-      const user = await logic.getUserDataByUsername(this.props.match.params.username)
+      if (logic.isLoggedIn) {
+        const user = await logic.getUserData()
+        const viewUser = await logic.getUserDataByUsername(this.props.match.params.username)
       
-      this.setState({ user: user })
+        this.setState({ user: user, viewUser: viewUser })
+      } else {
+        const viewUser = await logic.getUserDataByUsername(this.props.match.params.username)
+      
+        this.setState({ viewUser: viewUser })
+      }
     } catch (error) {
       alert(error)
     }
@@ -24,9 +31,9 @@ class ViewUser extends Component {
   componentDidUpdate = async prevProps => {
     if (this.props.match.params.username !== prevProps.match.params.username) {
       try {
-        const user = await logic.getUserDataByUsername(this.props.match.params.username)
+        const viewUser = await logic.getUserDataByUsername(this.props.match.params.username)
         
-        this.setState({ user: user })
+        this.setState({ viewUser: viewUser })
       } catch (error) {
         alert(error)
       }
@@ -35,9 +42,9 @@ class ViewUser extends Component {
 
   update = async () => {
     try {
-      const user = await logic.getUserDataByUsername(this.props.match.params.username)
-      
-      this.setState({ user: user, flag: !this.state.flag })
+      const viewUser = await logic.getUserDataByUsername(this.props.match.params.username)
+  
+      this.setState({ viewUser: viewUser, flag: !this.state.flag })
     } catch (error) {
       alert(error)
     }
@@ -46,12 +53,12 @@ class ViewUser extends Component {
   render() {
     return (
       <div className="wrapper">
-        <Navbar {...this.props} />
+        <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
             <div className="row mt-5">
-              <Sidebar {...this.props} user={this.state.user} update={this.update} />
-              <Main {...this.props} user={this.state.user} update={this.update} />
+              <Sidebar {...this.props} user={this.state.viewUser} update={this.update} />
+              <Main {...this.props} user={this.state.viewUser} update={this.update} />
             </div>
           </div>
         </section>

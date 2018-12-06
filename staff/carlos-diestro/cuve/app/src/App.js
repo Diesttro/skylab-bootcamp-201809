@@ -11,7 +11,7 @@ import ViewUser from './components/ViewUser/ViewUser'
 import ViewThread from './components/ViewThread/ViewThread'
 import NotFound from './components/NotFound/NotFound'
 import Notification from './components/Notification/Notification'
-import Navbar from './components/Navbar/Navbar'
+import ViewChat from './components/ViewChat/ViewChat'
 
 import logic from './logic'
 
@@ -29,6 +29,7 @@ class App extends Component {
         <Route path="/profile" render={props => logic.isLoggedIn ? <Profile {...props} /> : <Redirect to="/" /> } />
         <Route path="/edit" render={props => logic.isLoggedIn ? <Profile {...props} /> : <Redirect to="/" /> } />
         <Route path="/notifications" render={props => logic.isLoggedIn ? <Notification {...props} /> : <Redirect to="/" /> } />
+        <Route path="/chats" render={props => logic.isLoggedIn ? <ViewChat {...props} /> : <Redirect to="/" /> } />
         <Route component={NotFound} />
       </Switch>
     )

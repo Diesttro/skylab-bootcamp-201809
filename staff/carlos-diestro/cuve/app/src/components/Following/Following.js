@@ -11,7 +11,7 @@ const Following = props => {
           {props.user.following.map(user => {
             return (
               <div className="col-2 mx-2 text-center">
-                <Link to={`/user/${user.username}`}><img src={user.avatar} alt="" /> @{user.username}</Link>
+                <Link to={`/user/${user.username}`}><img src={logic.url + user.avatar} alt="" /> @{user.username}</Link>
               </div>
             )
           })}

@@ -19,7 +19,6 @@ class NotificationList extends Component {
 
   handleAcceptClick = async (event, username) => {
     try {
-      debugger
       const result = await logic.acceptFollow(username)
 
       const user = await logic.getUserData()
@@ -31,7 +30,6 @@ class NotificationList extends Component {
   }
 
   handleRejectClick = async (event, username) => {
-    debugger
     try {
       const result = await logic.rejectFollow(username)
 
@@ -52,7 +50,7 @@ class NotificationList extends Component {
               {this.state.user.pending.length ? this.state.user.pending.map(user => (
                 <div className="row align-items-center my-2">
                   <div className="col">
-                    <Link to={`/user/${user.username}`}><img src={user.avatar} alt="" /> @{user.username}</Link>
+                    <Link to={`/user/${user.username}`}><img src={logic.url + user.avatar} className="mr-2" />@{user.username}</Link>
                   </div>
                   <div className="col text-right">
                     <button type="button" className="btn btn-primary mr-2" onClick={event => this.handleAcceptClick(event, user.username)}>Accept</button>

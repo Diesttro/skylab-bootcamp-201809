@@ -97,8 +97,6 @@ const logic = {
         description: true,
         signed: true,
         country: true,
-        followers: true,
-        pending: true,
         private: true
       }
 
@@ -452,18 +450,22 @@ const logic = {
       }]
 
       // OLD LOGIC
-      const chat = await Chat.findOne({ members: { $all: [sender, receiver] } })
+      let chat = await Chat.findOne({ members: { $all: [sender, receiver] } })
 
       if (chat) {
-        const result = await Chat.updateOne({ _id: chat.id }, { $push: { messages } })
+        if (text) {
+          const result = await Chat.updateOne({ _id: chat.id }, { $set: { last: Date.now() }, $push: { messages } })
 
-        return result
+          return chat.id
+        }
       } else {
         const members = [sender, receiver]
 
-        const newChat = new Chat({ members, messages })
+        const newChat = new Chat({ members })
 
-        return newChat.save()
+        newChat.save()
+
+        return newChat.id
       }
 
       // const chat = await Chat.findOne({ _id: id })
@@ -483,7 +485,7 @@ const logic = {
       const chats = await Chat.find({ members: id }, { __v: 0, 'messages._id': 0 }).lean().populate([
         { path: 'members', select: '_id avatar username' },
         { path: 'messages.sender', select: '_id' }
-      ])
+      ]).sort({ last: 'desc' })
 
       if (!chats) return []
 
@@ -540,47 +542,47 @@ const logic = {
     })()
   },
 
-  async readChat() {
-    try {
-      const chat = await Chat.update(
-        { 
-          $and: [
-            { _id: '5c070f20da3f341be4481c8c' },
-            { messages: { $elemMatch: { sender: '5c070e65da3f341be4481c89' } } } 
-          ]
-        },
-        {
-          $set: { 'messages.$[].read': false }
-        }
-      )
-      debugger
-    } catch (error) {
-      debugger
-    }
-  },
+  // async readChat() {
+  //   try {
+  //     const chat = await Chat.update(
+  //       { 
+  //         $and: [
+  //           { _id: '5c070f20da3f341be4481c8c' },
+  //           { messages: { $elemMatch: { sender: '5c070e65da3f341be4481c89' } } } 
+  //         ]
+  //       },
+  //       {
+  //         $set: { 'messages.$[].read': false }
+  //       }
+  //     )
+  //     debugger
+  //   } catch (error) {
+  //     debugger
+  //   }
+  // },
 
-  saveUserPhoto(id, file, type) {
-    const folder = '/users'
-    const pathDir = 'public' + folder
-    const filename = id + '.' + type
+  // saveUserPhoto(id, file, type) {
+  //   const folder = '/users'
+  //   const pathDir = 'public' + folder
+  //   const filename = id + '.' + type
 
-    return new Promise((resolve, reject) => {
-      try {
-        const pathToFile = path.join(pathDir, filename)
-        const pathToUrl = 'http://' + ip.address() + ':' + process.env.PORT + folder + '/' + filename
+  //   return new Promise((resolve, reject) => {
+  //     try {
+  //       const pathToFile = path.join(pathDir, filename)
+  //       const pathToUrl = 'http://' + ip.address() + ':' + process.env.PORT + folder + '/' + filename
 
-        const ws = fs.createWriteStream(pathToFile)
+  //       const ws = fs.createWriteStream(pathToFile)
 
-        file.pipe(ws)
+  //       file.pipe(ws)
 
-        file.on('end', () => resolve(pathToUrl))
+  //       file.on('end', () => resolve(pathToUrl))
 
-        file.on('error', reject)
-      } catch (err) {
-        reject(err)
-      }
-    })
-  },
+  //       file.on('error', reject)
+  //     } catch (err) {
+  //       reject(err)
+  //     }
+  //   })
+  // },
 
   async retrieveFollowersByUsername(username) {
     return await User.find({ username }, { followers: 1, _id: 0}).lean().populate({ path: 'followers', select: 'avatar username -_id' })
@@ -590,10 +592,13 @@ const logic = {
     return await User.find({ username }, { following: 1, _id: 0}).lean().populate({ path: 'following', select: 'avatar username -_id' })
   },
 
-  saveUserChanges(id, changes) {
-    return (async () => {
+  async saveUserChanges(id, changes) {
+    try {
       await User.updateOne({ _id: id }, { $set: changes })
-    })()
+    } catch (error) {
+      debugger
+      throw Error(error)
+    }
   },
 
   saveImage(id, img, type, dir) {

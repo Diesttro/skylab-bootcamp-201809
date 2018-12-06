@@ -3,6 +3,7 @@ import './Sidebar.css'
 import Trend from '../Trend/Trend'
 import PopularPeople from '../PopularPeople/PopularPeople'
 import User from '../User/User'
+import ChatList from '../ChatList/ChatList'
 
 class Sidebar extends Component {
   state = {}
@@ -38,11 +39,18 @@ class Sidebar extends Component {
             <PopularPeople />
           </div>
         )
+      case '/chats':
+        return (
+          <div className="col-4">
+            <ChatList {...this.props} update={this.update} />
+          </div>
+        )
     }
   }
 
-  update = () => {
-    this.props.update()
+  update = id => {
+    debugger
+    this.props.update(id)
   }
 
   render() {

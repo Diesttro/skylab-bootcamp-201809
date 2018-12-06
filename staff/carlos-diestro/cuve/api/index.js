@@ -14,12 +14,15 @@ mongoose.connect(MONGO_URL, { useCreateIndex: true, useNewUrlParser: true })
     const { argv: [, , port = PORT || 8080] } = process
 
     const app = express()
+    // const server = require('http').Server(express)
+    // const io = require('socket.io')(server)
 
     app.use(express.static('public'))
 
     app.use(cors)
 
     app.use('/api', router)
+
 
     app.listen(port, () => console.log(`server up and running on port ${port}`))
   })
