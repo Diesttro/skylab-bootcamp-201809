@@ -56,7 +56,7 @@ class ViewUser extends Component {
         <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
-            <div className="row mt-5">
+            <div className="row">
               <Sidebar {...this.props} user={this.state.viewUser} update={this.update} />
               <Main {...this.props} user={this.state.viewUser} update={this.update} />
             </div>

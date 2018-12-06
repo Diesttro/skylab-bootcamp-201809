@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node .",
+    "debug": "node debug .",
+    "test": "mocha tests/logic.spec.js",
+    "debug-test": "mocha debug tests/logic.spec.js",
+    "coverage" : "nyc mocha tests/logic.spec.js",
+    "coverage-report": "nyc report --reporter=html"
   },
   "keywords": [],
   "author": "",
@@ -12,16 +17,15 @@
   "dependencies": {
     "@types/express-fileupload": "^0.4.0",
     "body-parser": "^1.18.3",
-    "busboy": "^0.2.14",
+    "cuve-data": "file:../cuve-data",
     "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "express-fileupload": "^1.0.0",
-    "ip": "^1.1.5",
     "jsonwebtoken": "^8.3.0",
-    "mongoose": "^5.3.11",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0"
+    "chai": "^4.2.0",
+    "nyc": "^13.1.0"
   }
 }

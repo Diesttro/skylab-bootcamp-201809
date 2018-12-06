@@ -14,7 +14,7 @@ class Sidebar extends Component {
       case '/thread':
       case '/search':
         return (
-          <div className="col-4">
+          <div className="col-lg-4 mt-5 mb-2">
             <Trend />
             <div className="w-100 my-5"></div>
             <PopularPeople />
@@ -23,25 +23,25 @@ class Sidebar extends Component {
       case '/profile':
       case '/edit':
         return (
-          <div className="col-4">
+          <div className="col-lg-4 mt-5 mb-2">
             <User {...this.props} />
           </div>
         )
       case '/user':
         return (
-          <div className="col-4">
+          <div className="col-lg-4 mt-5 mb-2">
             <User {...this.props} update={this.update} />
           </div>
         )
       case '/notifications':
         return (
-          <div className="col-4">
+          <div className="col-lg-4 mt-5 mb-2">
             <PopularPeople />
           </div>
         )
       case '/chats':
         return (
-          <div className="col-4">
+          <div className="col-lg-4 mt-5 mb-2">
             <ChatList {...this.props} update={this.update} />
           </div>
         )

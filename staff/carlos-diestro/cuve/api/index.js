@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const mongoose = require('mongoose')
+const { mongoose } = require('cuve-data')
 const express = require('express')
 const router = require('./routes')
 const cors = require('./utils/cors')

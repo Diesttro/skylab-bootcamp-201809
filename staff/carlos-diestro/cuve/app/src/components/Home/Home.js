@@ -28,7 +28,7 @@ class Home extends Component {
         <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
-            <div className="row mt-5">
+            <div className="row">
               <Sidebar {...this.props} user={this.state.user} />
               <Main {...this.props} user={this.state.user} />
             </div>

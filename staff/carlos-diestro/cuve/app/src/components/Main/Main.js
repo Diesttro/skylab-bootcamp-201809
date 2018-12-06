@@ -23,7 +23,7 @@ class Main extends Component {
       case '/home':
       case '/profile':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Write thread</h3>
             <WriteThread update={this.update} />
             <h3 className="mt-5 mb-3 font-weight-bold">Threads</h3>
@@ -32,7 +32,7 @@ class Main extends Component {
         )
       case '/thread':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Thread</h3>
             <Threads {...this.props} />
           </div>
@@ -44,11 +44,11 @@ class Main extends Component {
           if (logic.isLoggedIn && this.props.user.id === logic._user.id) this.props.history.push('/profile')
 
           if (this.props.user.private && !this.props.user.threads) {
-            component = <div className="col-7 offset-1 text-center">
+            component = <div className="col-lg-7 offset-lg-1 mt-5 mb-2 text-center">
               <h3 className="mb-3 font-weight-bold">User is private</h3>
             </div>
           } else {
-            component = <div className="col-7 offset-1">
+            component = <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
               <div className="row text-center">
                 <div className="col">
                   <button type="button" className={this.state.tab === 'threads' ? 'btn btn-primary' : 'btn btn-link'} onClick={() => this.handleTabClick('threads')}>Threads</button>
@@ -70,28 +70,28 @@ class Main extends Component {
         return component
       case '/edit':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Edit</h3>
             <Edit {...this.props} />
           </div>
         )
       case '/search':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Results</h3>
             <SearchList {...this.props} />
           </div>
         )
       case '/notifications':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Notifications</h3>
             <NotificationList {...this.props} />
           </div>
         )
       case '/chats':
         return (
-          <div className="col-7 offset-1">
+          <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Messages</h3>
             <ChatMessage {...this.props} />
           </div>

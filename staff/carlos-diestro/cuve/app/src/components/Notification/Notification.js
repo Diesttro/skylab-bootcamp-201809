@@ -29,7 +29,7 @@ class Notification extends Component {
         <Navbar {...this.props} user={this.state.user} />
         <section className="home">
           <div className="container">
-            <div className="row mt-5">
+            <div className="row">
               <Sidebar {...this.props} />
               <Main {...this.props} />
             </div>

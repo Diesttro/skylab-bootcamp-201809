@@ -37,7 +37,7 @@ class Navbar extends Component {
     if (logic.isLoggedIn) {
       return (
         <div className="row">
-          <div className="col-2 text-left">
+          <div className="col-lg-2 text-left">
             <Link to="/home"><img className="logo img-fluid" src={logo} /></Link>
           </div>
           <div className="col">
@@ -45,7 +45,7 @@ class Navbar extends Component {
               <input type="text" name="search" className="form-control" placeholder="Search people..." onChange={this.handleChange} />
             </form>
           </div>
-          <div className="col-5 d-flex justify-content-end align-items-center">
+          <div className="col-lg-5 d-flex justify-content-end align-items-center">
             <nav className="mr-4">
               <Link to="/chats" className="mr-1">MESSAGES</Link>
               {/* <span className="count">3</span> */}
