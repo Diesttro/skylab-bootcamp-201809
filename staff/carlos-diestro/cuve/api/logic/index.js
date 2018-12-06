@@ -1,17 +1,15 @@
 const fs = require('fs')
 const path = require('path')
-const url = require('url')
-const ip = require('ip')
 const { User, Thread, Chat } = require('../data')
 
 const logic = {
   /**
    * Register a user
    * 
-   * @param {*} fullname 
-   * @param {*} username 
-   * @param {*} email 
-   * @param {*} password 
+   * @param {string} fullname 
+   * @param {string} username 
+   * @param {string} email 
+   * @param {string} password 
    */
   register(fullname, username, email, password) {
     return (async () => {
@@ -28,8 +26,8 @@ const logic = {
   /**
    * Authenticate a user
    * 
-   * @param {*} username 
-   * @param {*} password 
+   * @param {string} username 
+   * @param {string} password 
    */
   authenticate(username, password) {
     return (async () => {
@@ -44,7 +42,7 @@ const logic = {
   /**
    * Retrieve a user
    * 
-   * @param {*} id 
+   * @param {string} id 
    */
   retrieveUser(id) {
     return (async () => {
@@ -70,8 +68,8 @@ const logic = {
   /**
    * Retrieve a user by username depending on his configuration
    * 
-   * @param {*} id 
-   * @param {*} username 
+   * @param {string} id 
+   * @param {string} username 
    */
   retrieveUserByUsername(id, username) {
     return (async () => {
@@ -97,6 +95,7 @@ const logic = {
         description: true,
         signed: true,
         country: true,
+        pending: true,
         private: true
       }
 
@@ -162,6 +161,11 @@ const logic = {
     })()
   },
 
+  /**
+   * Find user by the fullname and the username
+   * 
+   * @param {string} username 
+   */
   findUsersByUsername(username) {
     return (async () => {
       const users = await User.aggregate([
@@ -186,6 +190,12 @@ const logic = {
     })()
   },
 
+  /**
+   * Follow user by the username
+   * 
+   * @param {string} id 
+   * @param {string} username 
+   */
   followUserByUsername(id, username) {
     return (async () => {
       const user = await User.findOne({ username })
@@ -205,6 +215,12 @@ const logic = {
     })()
   },
 
+  /**
+   * Unfollow user by the username
+   * 
+   * @param {string} id 
+   * @param {string} username 
+   */
   unfollowUserByUsername(id, username) {
     return (async () => {
       let result
@@ -221,6 +237,12 @@ const logic = {
     })()
   },
 
+  /**
+   * Accept a pending follow
+   * 
+   * @param {string} id 
+   * @param {string} username 
+   */
   acceptFollowerByUsername(id, username) {
     return (async () => {
       const follower = await User.findOne({ username })
@@ -231,6 +253,12 @@ const logic = {
     })()
   },
 
+  /**
+   * Reject pending follow 
+   * 
+   * @param {string} id 
+   * @param {string} username 
+   */
   rejectFollowerByUsername(id, username) {
     return (async () => {
       const follower = await User.findOne({ username })
@@ -239,6 +267,13 @@ const logic = {
     })()
   },
 
+  /**
+   * Add new thread
+   * 
+   * @param {string} uid 
+   * @param {string} text 
+   * @param {string} attached 
+   */
   addThread(uid, text, attached = null) {
     return (async () => {
       const thread = new Thread({ author: uid, text, attached })
@@ -247,12 +282,23 @@ const logic = {
     })()
   },
 
+  /**
+   * Remove thread
+   * 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   removeThread(id, uid) {
     return (async () => {
       return await Thread.deleteOne({ _id: id, author: uid })
     })()
   },
 
+  /**
+   * Retrieve the thread data
+   * 
+   * @param {string} id 
+   */
   retrieveThread(id) {
     return (async () => {
       let thread = await Thread.findById(id).lean().populate([
@@ -304,9 +350,9 @@ const logic = {
   },
 
   /**
-   * Retrieve user and shared threads
+   * Retrieve user threads and shared threads by the user
    * 
-   * @param {*} uid 
+   * @param {string} uid 
    */
   retrieveUserThreads(uid) {
     return (async () => {
@@ -339,6 +385,11 @@ const logic = {
     })()
   },
 
+  /**
+   * Retrieve thread of following users
+   * 
+   * @param {string} uid 
+   */
   retrieveFollowingUsersThreads(uid) {
     return (async () => {
       const user = await User.findOne({ _id: uid }, { following: true }).lean()
@@ -372,42 +423,83 @@ const logic = {
     })()
   },
 
+  /**
+   * Add new comment
+   * 
+   * @param {string} tid 
+   * @param {string} uid 
+   * @param {string} text 
+   */
   addComment(tid, uid, text) {
     return (async () => {
       return await Thread.updateOne({ _id: tid }, { $push: { comments: [{ author: uid, text }] } })
     })()
   },
 
+  /**
+   * Remove comment
+   * 
+   * @param {string} tid 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   removeComment(tid, id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: tid }, { $pull: { comments: { _id: id, author: uid } } })
     })()
   },
 
+  /**
+   * Share a thread
+   * 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   shareThread(id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: id }, { $push: { shares: uid } })
     })()
   },
 
+  /**
+   * Unshare a thread
+   * 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   unshareThread(id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: id }, { $pull: { shares: uid } })
     })()
   },
 
+  /**
+   * Like a thread
+   * 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   likeThread(id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: id }, { $push: { likes: uid } })
     })()
   },
 
+  /**
+   * Unlike a thread
+   * 
+   * @param {string} id 
+   * @param {string} uid 
+   */
   unlikeThread(id, uid) {
     return (async () => {
       return await Thread.updateOne({ _id: id }, { $pull: { likes: uid } })
     })()
   },
 
+  /**
+   * Retrieve users by amount of threads
+   */
   retrievePopularPeople() {
     return (async () => {
       const popularPpl = await Thread.aggregate(
@@ -441,6 +533,13 @@ const logic = {
     })()
   },
 
+  /**
+   * Save new message in chat
+   * 
+   * @param {string} sender 
+   * @param {string} receiver 
+   * @param {string} text 
+   */
   saveMessage(sender, receiver, text) {
     return (async () => {
       // const members = [sender, receiver]
@@ -480,6 +579,11 @@ const logic = {
     })()
   },
 
+  /**
+   * Retrieve user chats
+   * 
+   * @param {string} id 
+   */
   retrieveUserChats(id) {
     return (async () => {
       const chats = await Chat.find({ members: id }, { __v: 0, 'messages._id': 0 }).lean().populate([
@@ -512,6 +616,11 @@ const logic = {
     })()
   },
 
+  /**
+   * Retrieve a chat
+   * 
+   * @param {string} id 
+   */
   retrieveChat(id) {
     return (async () => {
       const chat = await Chat.findOne({ _id: id }, { __v: 0, 'messages._id': 0 }).lean().populate([
@@ -584,23 +693,46 @@ const logic = {
   //   })
   // },
 
+  /**
+   * Retrieve followers of user by username
+   * 
+   * @param {string} username 
+   */
   async retrieveFollowersByUsername(username) {
     return await User.find({ username }, { followers: 1, _id: 0}).lean().populate({ path: 'followers', select: 'avatar username -_id' })
   },
 
+  /**
+   * Retrieve following of user by username
+   * 
+   * @param {string} username 
+   */
   async retrieveFollowingByUsername(username) {
     return await User.find({ username }, { following: 1, _id: 0}).lean().populate({ path: 'following', select: 'avatar username -_id' })
   },
 
+  /**
+   * Save profile changes
+   * 
+   * @param {string} id 
+   * @param {object} changes 
+   */
   async saveUserChanges(id, changes) {
     try {
       await User.updateOne({ _id: id }, { $set: changes })
     } catch (error) {
-      debugger
       throw Error(error)
     }
   },
 
+  /**
+   * Save image on disk
+   * 
+   * @param {string} id 
+   * @param {file} img 
+   * @param {string} type 
+   * @param {string} dir 
+   */
   saveImage(id, img, type, dir) {
     const folder = '../public' + dir
     const filename = id + '.' + type

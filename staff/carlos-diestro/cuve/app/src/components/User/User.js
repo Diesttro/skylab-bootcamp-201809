@@ -17,12 +17,31 @@ class User extends Component {
 
   profileLink = username => {
     let link
+    debugger
 
     if (this.props.user.id === logic._user.id) {
       link = <button type="button" className="btn btn-primary" onClick={this.handleEditClick}>Edit profile</button>
+    } else if (this.props.user.private) {
+      const pending = this.props.user.pending.find(user => logic._user.id === user)
+
+      if (pending) {
+        link = <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
+      } else if (this.props.user.followers) {
+        const followed = this.props.user.followers.find(user => logic._user.id === user.id)
+        
+        if (followed) {
+          link = <div>
+              <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
+              <br />
+              <button type="button" className="btn btn-success mt-2" onClick={this.handleChatClick}>Chat</button>
+            </div>
+        }
+      } else {
+        link = <button type="button" className="btn btn-primary" onClick={this.handlefollowClick}>Follow</button>
+      }
     } else {
       const followed = this.props.user.followers.find(user => logic._user.id === user.id)
-      
+        
       if (followed) {
         link = <div>
             <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
@@ -30,13 +49,7 @@ class User extends Component {
             <button type="button" className="btn btn-success mt-2" onClick={this.handleChatClick}>Chat</button>
           </div>
       } else {
-        const pending = this.props.user.pending.find(user => logic._user.id === user)
-        
-        if (pending) {
-          link = <button type="button" className="btn btn-primary" onClick={this.handleUnfollowClick}>Unfollow</button>
-        } else {
-          link = <button type="button" className="btn btn-primary" onClick={this.handlefollowClick}>Follow</button>
-        }
+        link = <button type="button" className="btn btn-primary" onClick={this.handlefollowClick}>Follow</button>
       }
     }
 

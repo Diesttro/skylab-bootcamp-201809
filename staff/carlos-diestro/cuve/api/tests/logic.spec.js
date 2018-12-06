@@ -54,7 +54,7 @@ describe('logic', () => {
         expect(user.username).to.be.equal(username)
         expect(user.email).to.be.equal(email)
         expect(user.password).to.be.undefined
-        expect(user.likes.length).to.be.equal(0)
+        // expect(user.likes.length).to.be.equal(0)
         expect(user.followers.length).to.be.equal(0)
         expect(user.following.length).to.be.equal(0)
         expect(user.mentions.length).to.be.equal(0)
@@ -220,7 +220,7 @@ describe('logic', () => {
     })
   })
 
-  false && describe('follow', () => {
+  describe('follow', () => {
     let user, user2, user3
 
     before(() => {
@@ -254,21 +254,73 @@ describe('logic', () => {
     })
 
     describe('add follower', () => {
-      it('should succeed on correct data', async () => {
-        debugger
+      it('should succeed on follow public profile', async () => {
+        await logic.followUserByUsername(user2.id, user.username)
 
-        const fol1 = await logic.followUserByUsername(user2.id, user.username)
+        const _user = await User.findOne({ _id: user.id })
 
-        debugger
-
-        const unfol1 = await logic.unfollowUserByUsername(user2.id, user.username)
-
-        debugger
-
-        const fol2 = await logic.followUserByUsername(user2.id, user3.username)
-
-        debugger
+        expect(_user.followers.length).to.be.equal(1)
+        expect(_user.following.length).to.be.equal(0)
+        expect(_user.pending.length).to.be.equal(0)
+        expect(_user.followers[0]._id.toString()).to.be.equal(user2.id)
       })
+
+      it('should succeed on follow private profile', async () => {
+        await logic.followUserByUsername(user.id, user3.username)
+
+        const _user = await User.findOne({ _id: user3.id })
+
+        expect(_user.followers.length).to.be.equal(0)
+        expect(_user.following.length).to.be.equal(0)
+        expect(_user.pending.length).to.be.equal(1)
+        expect(_user.pending[0]._id.toString()).to.be.equal(user.id)
+      })
+    })
+
+    describe('remove follower', () => {
+      it('should succeed on unfollow public profile', async () => {
+        await logic.unfollowUserByUsername(user2.id, user.username)
+
+        const _user = await User.findOne({ _id: user.id })
+
+        expect(_user.followers.length).to.be.equal(0)
+        expect(_user.following.length).to.be.equal(0)
+        expect(_user.pending.length).to.be.equal(0)
+      })
+
+      it('should succeed on unfollow public profile', async () => {
+        await logic.unfollowUserByUsername(user.id, user3.username)
+
+        const _user = await User.findOne({ _id: user.id })
+
+        expect(_user.pending.length).to.be.equal(0)
+        expect(_user.followers.length).to.be.equal(0)
+        expect(_user.following.length).to.be.equal(0)
+      })
+    })
+  })
+
+  describe('find user', () => {
+    let user
+
+    before(() => {
+      user = new User({
+        fullname: `fn-${Math.random()}`,
+        username: `un-${Math.random()}`,
+        email: `em-${Math.random()}`,
+        password: `pw-${Math.random()}`
+      })
+
+      user.save()
+    })
+
+    it('should succeed on find user by username', async () => {
+      const results = await logic.findUsersByUsername(user.username)
+
+      expect(results.length).to.be.equal(1)
+      expect(results[0].id).to.be.equal(user.id)
+      expect(results[0].fullname).to.be.undefined
+      expect(results[0].username).to.be.equal(user.username)
     })
   })
 

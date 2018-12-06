@@ -416,9 +416,9 @@ router.post('/users/:id/chats', [jwtHelper, jsonBodyParser], async (req, res) =>
   try {
     if (sub !== id) throw Error('token sub does not match with user id')
 
-    const chat = await logic.saveMessage(id, to, text)
-
     debugger
+
+    const chat = await logic.saveMessage(id, to, text)
 
     // io.sockets.emit('refresh', chat)
 
@@ -468,10 +468,24 @@ router.get('/users/:id/chats/:cid', [jwtHelper, jsonBodyParser], async (req, res
   }
 })
 
-// module.exports = io => {
-//   router.io = io
+router.get('/users/popular', async (req, res) => {
+  try {
+    const popular = await logic.retrievePopularPeople()
 
-//   return router
-// }
+    res.json({
+      data: popular
+    })
+  } catch (error) {
+    res.status(404).json({
+      error: error.message
+    })
+  }
+})
 
-module.exports = router
+module.exports = io => {
+  router.io = io
+
+  return router
+}
+
+// module.exports = router

@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './Threads.css'
-import { Container, Row, Col, Form, Input, FormGroup, FormFeedback, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import Thread from '../Thread/Thread'
 import WriteComment from '../WriteComment/WriteComment'
@@ -101,7 +100,7 @@ class Threads extends Component {
     return (
       <div>
         {this.loadThreadsComponent()}
-        {this.state.comments && <WriteComment {...this.props} update={this.update} />}
+        {logic.isLoggedIn && this.state.comments && <WriteComment {...this.props} update={this.update} />}
         {this.state.comments && this.state.threads[0].comments.map(comment => <Comment data={comment} update={this.update} />)}
       </div>
     )

@@ -7,8 +7,8 @@ import logic from '../../logic'
 class WriteComment extends Component {
   state = {
     text: '',
-    char: 20,
-    maxChar: 20,
+    char: 120,
+    maxChar: 120,
     fadeIn: false
   }
 
@@ -41,7 +41,7 @@ class WriteComment extends Component {
       <div className="block thread my-3">
         <form onSubmit={this.handleSubmit}>
           <textarea className="form-control write-thread mb-1" value={this.state.text} onChange={this.handleChange}></textarea>
-          <span className="mr-2 char-count">{this.state.char}</span>
+          <span className="mr-2 char-count">{this.state.char} / {this.state.maxChar}</span>
           <button type="submit" className="btn btn-primary mt-1" disabled={logic.isLoggedIn ? false: true}>Send</button>
         </form>
       </div>

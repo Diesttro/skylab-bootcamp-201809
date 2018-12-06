@@ -9,6 +9,7 @@ import SearchList from '../SearchList/SearchList'
 import NotificationList from '../NotificationList/NotificationList'
 import ChatMessage from '../ChatMessage/ChatMessage'
 import Spinner from '../Spinner/Spinner'
+import logic from '../../logic';
 
 
 class Main extends Component {
@@ -40,6 +41,8 @@ class Main extends Component {
         let component
 
         if (this.props.user) {
+          if (logic.isLoggedIn && this.props.user.id === logic._user.id) this.props.history.push('/profile')
+
           if (this.props.user.private && !this.props.user.threads) {
             component = <div className="col-7 offset-1 text-center">
               <h3 className="mb-3 font-weight-bold">User is private</h3>

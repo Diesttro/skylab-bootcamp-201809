@@ -578,6 +578,22 @@ const logic = {
     if (res.error) throw Error(res.error)
 
     return res.message
+  },
+
+  async getPopularPeople() {
+    const endpoint = '/api/users/popular'
+    const options = {
+      method: 'GET'
+    }
+
+    let res =  await fetch(this.url + endpoint, options)
+    res = await res.json()
+
+    debugger
+    
+    if (res.error) throw Error(res.error)
+
+    return res.data
   }
 }
 
