@@ -5,10 +5,11 @@
 }
 
 .block img {
-  border-radius: 50%;
+  border-radius: 3rem;
 }
 
 .block .avatar {
   max-width: 80px;
-  max-height: 80px
+  max-height: 80px;
+  border-radius: 3rem;
 }

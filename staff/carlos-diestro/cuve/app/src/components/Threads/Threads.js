@@ -77,7 +77,7 @@ class Threads extends Component {
 
     if (this.state.threads) {
       if (this.state.threads.length) {
-        component = this.state.threads.map(thread => <Thread data={thread} update={this.update} />)
+        component = this.state.threads.map((thread, index) => <Thread key={index} data={thread} update={this.update} />)
       } else {
         if (this.props.user && this.props.user.private) {
           if (logic.isLoggedIn && this.props.user.id === logic._user.id) {
@@ -101,7 +101,7 @@ class Threads extends Component {
       <div>
         {this.loadThreadsComponent()}
         {logic.isLoggedIn && this.state.comments && <WriteComment {...this.props} update={this.update} />}
-        {this.state.comments && this.state.threads[0].comments.map(comment => <Comment data={comment} update={this.update} />)}
+        {this.state.comments && this.state.threads[0].comments.map((comment, index) => <Comment key={index} data={comment} update={this.update} />)}
       </div>
     )
   }

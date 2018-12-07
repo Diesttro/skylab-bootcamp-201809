@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './User.css'
-import { Redirect, Link } from 'react-router-dom'
+import Spinner from '../Spinner/Spinner'
 import logic from '../../logic'
 
 class User extends Component {
@@ -17,7 +17,6 @@ class User extends Component {
 
   profileLink = username => {
     let link
-    debugger
 
     if (this.props.user.id === logic._user.id) {
       link = <button type="button" className="btn btn-primary" onClick={this.handleEditClick}>Edit profile</button>
@@ -95,7 +94,7 @@ class User extends Component {
       <div>
         <h3 className="mb-3 font-weight-bold">Profile</h3>
         <div className="block">
-          {this.props.user && <div className="row">
+          {this.props.user ? <div className="row">
             <div className="col my-2 text-center">
               <img className="avatar" src={logic.url + this.props.user.avatar} alt="avatar" />
             </div>
@@ -115,7 +114,7 @@ class User extends Component {
             {logic.isLoggedIn && this.props.user && <div className="col my-2 text-center">
               {this.profileLink(this.props.user.username)}
             </div>}
-          </div>}
+          </div> : <Spinner /> }
         </div>
       </div>
     )

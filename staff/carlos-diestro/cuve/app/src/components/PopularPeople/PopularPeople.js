@@ -19,15 +19,15 @@ class PopularPeople extends Component {
   render() {
     return (
       <div>
-        <h3 class="mb-3 font-weight-bold">Popular people</h3>
-        <div class="block">
-          <div class="row">
+        <h3 className="mb-3 font-weight-bold">Popular people</h3>
+        <div className="block">
+          <div className="row">
             {this.state.popular && this.state.popular.length ? this.state.popular.map(user => {
               return (
-                <div class="col-4 my-2 text-center">
+                <div className="col-6 my-2 text-center">
                   <Link to={`/user/${user.username}`}>
                   <img src={logic.url + user.avatar} alt="avatar" />
-                  @{user.username}
+                  <span className="d-block">@{user.username}</span>
                   </Link>
                 </div>)
             }) : 'Not enough data' }

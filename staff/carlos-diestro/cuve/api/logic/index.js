@@ -21,9 +21,13 @@ const logic = {
     ])
 
     return (async () => {
-      const user = await User.findOne({ username }).lean()
+      const userUsername = await User.findOne({ username })
 
-      if (user) throw Error('username already exist')
+      if (userUsername) throw Error('username already exist')
+
+      const userEmail = await User.findOne({ email })
+
+      if (userEmail) throw Error('email already exist')
 
       const newUser = new User({ fullname, username, email, password })
 
@@ -782,10 +786,22 @@ const logic = {
       { key: 'id', value: id, type: String }
     ])
 
+    if (changes.username) {
+      const username = await User.find({ username: changes.username })
+
+      if (username.length) throw Error('username already exists')
+    }
+
+    if (changes.email) {
+      const email = await User.find({ email: changes.email })
+
+      if (email.length) throw Error('email already exists')
+    }
+
     try {
       await User.updateOne({ _id: id }, { $set: changes })
     } catch (error) {
-      throw Error(error)
+      throw Error('database error, please try again later')
     }
   },
 

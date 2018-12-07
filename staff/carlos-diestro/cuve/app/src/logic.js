@@ -135,11 +135,11 @@ const logic = {
       'image/png'
     ]
     
-    const maxSize = 300000
+    const maxSize = 3000000
 
     let formData = new FormData()
 
-    if (typeof avatar === 'object') {
+    if (avatar instanceof File) {
       if (!acceptedTypes.includes(avatar.type)) throw Error('only images are allowed')
       if (avatar.size > maxSize) throw Error('image should be 3mb maximum')
 
@@ -165,7 +165,7 @@ const logic = {
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
 
-    if (res.error) throw Error('username is taken')
+    if (res.error) throw Error(res.error)
 
     return res.message
   },
@@ -186,7 +186,7 @@ const logic = {
 
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
-    
+
     if (res.error) throw Error(res.error)
     
     return res.data

@@ -8,9 +8,9 @@ const Following = props => {
     <div>
       {props.user && <div className="block follows my-3">
         {props.user.following.length > 0 ? <div className="row">
-          {props.user.following.map(user => {
+          {props.user.following.map((user, index) => {
             return (
-              <div className="col-2 mx-2 text-center">
+              <div key={index} className="col-3 mx-2 text-center">
                 <Link to={`/user/${user.username}`}><img src={logic.url + user.avatar} alt="" /> @{user.username}</Link>
               </div>
             )

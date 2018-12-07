@@ -8,7 +8,7 @@ function Landing(props) {
   return (
     <Container className="landing mt-5">
       <Row>
-        <Col className="my-5">
+        <Col className="my-5 text-center">
           <img className="logo mb-3" src={logo} />
           <h1 className="text-center">Cuve</h1>
         </Col>

@@ -72,7 +72,7 @@ class Main extends Component {
         return (
           <div className="col-lg-7 offset-lg-1 mt-5 mb-2">
             <h3 className="mb-3 font-weight-bold">Edit</h3>
-            <Edit {...this.props} />
+            {this.props.user ? <Edit {...this.props} /> : <Spinner />}
           </div>
         )
       case '/search':
