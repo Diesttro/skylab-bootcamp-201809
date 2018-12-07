@@ -22,12 +22,12 @@ const logic = {
 
     return (async () => {
       const userUsername = await User.findOne({ username })
-
-      if (userUsername) throw Error('username already exist')
+debugger
+      if (userUsername.length > 1) throw Error('username already exist')
 
       const userEmail = await User.findOne({ email })
-
-      if (userEmail) throw Error('email already exist')
+debugger
+      if (userEmail.length > 1) throw Error('email already exist')
 
       const newUser = new User({ fullname, username, email, password })
 
@@ -789,10 +789,10 @@ const logic = {
     if (changes.username) {
       const username = await User.find({ username: changes.username })
 
-      if (username.length) throw Error('username already exists')
+      if (username.length > 1) throw Error('username already exists')
     }
 
-    if (changes.email) {
+    if (changes.email > 1) {
       const email = await User.find({ email: changes.email })
 
       if (email.length) throw Error('email already exists')

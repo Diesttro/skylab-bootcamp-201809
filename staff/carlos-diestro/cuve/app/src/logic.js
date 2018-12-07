@@ -2,6 +2,7 @@ const validate = require('./utils/validate')
 
 const logic = {
   url: 'http://localhost:8080',
+  // url: 'https://stark-lowlands-29725.herokuapp.com',
   _user: JSON.parse(sessionStorage.getItem('user')) || null,
 
   get isLoggedIn() {

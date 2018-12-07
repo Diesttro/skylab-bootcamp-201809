@@ -98,8 +98,9 @@ class User extends Component {
             <div className="col my-2 text-center">
               <img className="avatar" src={logic.url + this.props.user.avatar} alt="avatar" />
             </div>
+            <div className="row mx-5 my-2">
             <div className="w-100"></div>
-            <div className="col">
+            <div className="col font-weight-bold">
               {this.props.user.fullname}
             </div>
             <div className="w-100"></div>
@@ -109,6 +110,7 @@ class User extends Component {
             <div className="w-100"></div>
             <div className="col">
               {new Date(this.props.user.signed).toLocaleString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric' })}
+              </div>
               </div>
             <div className="w-100"></div>
             {logic.isLoggedIn && this.props.user && <div className="col my-2 text-center">
