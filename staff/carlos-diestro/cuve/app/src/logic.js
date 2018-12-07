@@ -120,16 +120,6 @@ const logic = {
   },
 
   async saveChanges(avatar, fullname, username, email, description, priv) {
-    const acceptedTypes = [
-      'image/jpg',
-      'image/jpeg',
-      'image/gif',
-      'image/png'
-    ]
-    const maxSize = 300000
-
-    if (avatar.type)
-
     validate([
       { key: 'fullname', value: fullname, type: String },
       { key: 'username', value: username, type: String },
@@ -137,6 +127,15 @@ const logic = {
       { key: 'description', value: description, priv: String },
       { key: 'priv', value: fullname, priv: Boolean }
     ])
+
+    const acceptedTypes = [
+      'image/jpg',
+      'image/jpeg',
+      'image/gif',
+      'image/png'
+    ]
+    
+    const maxSize = 300000
 
     let formData = new FormData()
 
@@ -588,8 +587,6 @@ const logic = {
 
     let res =  await fetch(this.url + endpoint, options)
     res = await res.json()
-
-    debugger
     
     if (res.error) throw Error(res.error)
 
